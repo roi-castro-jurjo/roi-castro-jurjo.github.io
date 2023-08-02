@@ -6,20 +6,82 @@
     --eucalyptus: #c3ef8f;
 }
 
-body {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+
+/* Base reset */
+* {
+  margin: 0;
+  padding: 0;
 }
+
+/* box-sizing and font sizing */
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html {
+  box-sizing: border-box;
+
+  /* Set font size for easy rem calculations
+   * default document font size = 16px, 1rem = 16px, 100% = 16px
+   * (100% / 16px) * 10 = 62.5%, 1rem = 10px, 62.5% = 10px
+  */
+  font-size: 62.5%;
+  scroll-behavior: smooth;
+}
+
+/* A few media query to set some font sizes at different screen sizes.
+ * This helps automate a bit of responsiveness.
+ * The trick is to use the rem unit for size values, margin and padding.
+ * Because rem is relative to the document font size
+ * when we scale up or down the font size on the document
+ * it will affect all properties using rem units for the values.
+*/
+
+/* I am using the em unit for breakpoints
+ * The calculation is the following
+ * screen size divided by browser base font size
+ * As an example: a breakpoint at 980px
+ * 980px / 16px = 61.25em
+*/
+
+/* 1200px / 16px = 75em */
+@media (max-width: 75em) {
+  html {
+    font-size: 60%;
+  }
+}
+
+/* 980px / 16px = 61.25em */
+@media (max-width: 61.25em) {
+  html {
+    font-size: 58%;
+  }
+}
+
+/* 460px / 16px = 28.75em */
+@media (max-width: 28.75em) {
+  html {
+    font-size: 55%;
+  }
+}
+
+
+
+
+
+
+
+
 
 ::selection{
    background: rgba(195, 239, 143, 0.5);
 }
 
 .screen {
-    padding: 3rem;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background: #252926;
     color: var(--eucalyptus);
     font-family: Monaco, "Courier New", Courier, monospace;
@@ -28,6 +90,11 @@ body {
         0 0 1px var(--eucalyptus),
         1px 1px 1px blue,
         -1px -1px 1px red;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
      
 }
 
@@ -54,21 +121,24 @@ body {
 
 .screen h1{
     font-family: "Press Start 2p", "Courier Prime", Courier, monospace;
+    font-size: xxx-large;
 }
 
 .screen h2, .screen h3, .screen h4 {
     font-weight: 400;
     color: var(--eucalyptus);
     font-family: "Courier Prime", Courier, monospace;
+    font-size: xx-large;
 }
 
 
 .container-glitch {
-    position: relative;
-    z-index: 99999;
     width: 100%;
-    height: 100%;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
 }
 
 
@@ -130,4 +200,6 @@ body {
 #start-button {
     border-radius: 45%;
     cursor: pointer;
+    width: 10vw;
+    margin-top: 15vh;
 }
