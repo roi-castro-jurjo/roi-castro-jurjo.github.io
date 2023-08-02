@@ -53,9 +53,14 @@ body {
         content: "";
 }
 
+.screen h1{
+    font-family: "Press Start 2p", "Courier Prime", Courier, monospace;
+}
+
 .screen h2, .screen h3, .screen h4 {
     font-weight: 400;
     color: #c3ef8f;
+    font-family: "Courier Prime", Courier, monospace;
 }
 
 
