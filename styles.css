@@ -9,8 +9,9 @@
 
 /* Base reset */
 * {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 /* box-sizing and font sizing */
@@ -20,17 +21,31 @@
   box-sizing: inherit;
 }
 
-html {
-  box-sizing: border-box;
 
-  /* Set font size for easy rem calculations
-   * default document font size = 16px, 1rem = 16px, 100% = 16px
-   * (100% / 16px) * 10 = 62.5%, 1rem = 10px, 62.5% = 10px
-  */
-  font-size: 62.5%;
-  scroll-behavior: smooth;
+body {
+  font-size: 14px;
 }
 
+/* Estilos para tabletas en modo retrato (768px - 1023px) */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  body {
+    font-size: 16px;
+  }
+}
+
+/* Estilos para tabletas en modo paisaje y pantallas pequeñas de escritorio (1024px - 1279px) */
+@media screen and (min-width: 1024px) and (max-width: 1279px) {
+  body {
+    font-size: 18px;
+  }
+}
+
+/* Estilos para pantallas de escritorio y monitores más grandes (1280px en adelante) */
+@media screen and (min-width: 1280px) {
+  body {
+    font-size: 20px;
+  }
+}
 
 
 
@@ -60,6 +75,7 @@ html {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
      
 }
 
@@ -110,6 +126,7 @@ html {
     flex-direction: column;
     align-items: center;
     gap: 2rem;
+    text-align: center;
 }
 
 
@@ -172,6 +189,6 @@ html {
     border-radius: 45%;
     cursor: pointer;
     width: 10vw;
-    min-width: 50px;
+    min-width: 100px;
     margin-top: 15vh;
 }
