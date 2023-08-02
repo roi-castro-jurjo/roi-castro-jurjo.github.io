@@ -1,0 +1,130 @@
+:root {
+    --smoky-black: #0F0F0F;
+    --black-chocolate: #1A2212;
+    --cal-poly-pomona-green: #2B4E33;
+    --amazon: #448053;
+    --eucalyptus: #41EC9D;
+}
+
+
+body{
+    padding: 3rem;
+    line-height: 1.314;
+}
+
+::selection{
+   background: rgba(195, 239, 143, 0.5);
+}
+
+.screen {
+    min-height: 100vh;
+    background: #252926;
+    color: #c3ef8f;
+    font-family: Monaco, "Courier New", Courier, monospace;
+    animation: crt 1ms infinite;
+    text-shadow:
+        0 0 1px #c3ef8f,
+        1px 1px 1px blue,
+        -1px -1px 1px red;
+     
+}
+
+.screen::after{
+    position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background:
+            repeating-linear-gradient(
+                top, transparent 0px,
+                transparent 2px,
+                rgba(0, 0, 0, 0.2) 2px,
+                rgba(0, 0, 0, 0.2) 4px
+            );
+        background-size: 100% 4px;
+        box-shadow:
+            inset 0 0 10em rgba(0, 0, 0, 0.5),
+            inset 0 0 2em rgba(0, 0, 0, 0.1);
+        z-index: -1;
+        content: "";
+}
+
+.screen h2, .screen h3, .screen h4 {
+    font-weight: 400;
+    color: #c3ef8f;
+}
+
+
+.screen a {
+    color: #c3ef8f;
+    background: rgba(195, 239, 143, 0.5);
+    border-color: rgba(195, 239, 143, 0.5);
+    &:hover {
+        border-color: transparent !important;
+    }
+}
+
+.container-glitch {
+    position: relative;
+    z-index: 99999;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+
+
+.container-glitch * {
+    animation:
+        5s distort 10s infinite alternate;
+}
+
+@keyframes crt {
+    28% {
+        background: #232624;
+    }
+    30% {
+        background: #272c28;
+    }
+    33% {
+        background: #232624;
+    }
+    34% {
+        background: #272c28;
+    }
+    35% {
+        background: #202421;
+    }
+}
+
+@keyframes distort {
+    10% {
+        opacity: 1;
+        top: 0;
+        left: 0;
+        transform: scale(1, 1);
+        transform: skew(0, 0);
+    }
+    11% {
+        opacity: 0.8;
+        top: 0px;
+        left: -100px;
+        transform: scale(1, 1.2);
+        transform: skew(50deg, 0);
+    }
+    12% {
+        opacity: 0.2;
+        top: 0px;
+        left: 100px;
+        transform: scale(1, 1.2);
+        transform: skew(-80deg, 0);
+    }
+    13% {
+        opacity: 1;
+        top: 0;
+        left: 0;
+        transform: scale(1, 1);
+        transform: skew(0, 0);
+    }
+}
