@@ -106,6 +106,9 @@ body {
     max-width: 100%;
     text-overflow: ellipsis;
     overflow: hidden;
+    height: 1em;
+    display: inline-block;
+
 }
 
 .screen h2, .screen h3, .screen h4 {
@@ -116,6 +119,8 @@ body {
     max-width: 100%;
     text-overflow: ellipsis;
     overflow: hidden;
+    height: 1em;
+    display: inline-block;
 }
 
 
@@ -192,3 +197,4 @@ body {
     min-width: 100px;
     margin-top: 15vh;
 }
+
