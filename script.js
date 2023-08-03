@@ -63,11 +63,36 @@ writeText(
   ['title-name', 'subtitle']
 );
 
+function adjustMinHeightToZero(element) {
+    if (!element) return; // If the element is null or undefined, stop the recursion
+
+    // Set the min-height of the current element to 0
+    element.style.minHeight = '0';
+
+    // Get all child nodes of the current element
+    const children = element.children;
+
+    // Recursively adjust min-height for each child element
+    for (let i = 0; i < children.length; i++) {
+        adjustMinHeightToZero(children[i]);
+    }
+}
+
+function resetScreen() {
+  setTimeout(function() {
+    var elemento = document.getElementById("screen-container");
+    if (elemento) {
+      elemento.remove();
+    }
+  }, 1000); // 1000 milisegundos (1 segundo)
+}
+
 
 function turnOffTV() {
   let screen = document.getElementsByClassName("screen")[0];
-  screen.remove()
-  
+  adjustMinHeightToZero(screen)
+  screen.classList.toggle("off")
+  resetScreen()
 }
 
 document.getElementById("start-button").addEventListener("click", turnOffTV)
