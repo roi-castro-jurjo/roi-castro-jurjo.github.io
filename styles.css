@@ -105,9 +105,7 @@ body {
     font-size: xxx-large;
     max-width: 100%;
     text-overflow: ellipsis;
-    overflow: hidden;
-    height: 1em;
-    display: inline-block;
+    min-height: 1.3em;
 
 }
 
@@ -118,9 +116,9 @@ body {
     font-size: xx-large;
     max-width: 100%;
     text-overflow: ellipsis;
-    overflow: hidden;
-    height: 1em;
-    display: inline-block;
+    min-height: 1.3em;
+    margin-top: -0.3em;
+
 }
 
 
@@ -197,4 +195,3 @@ body {
     min-width: 100px;
     margin-top: 15vh;
 }
-
