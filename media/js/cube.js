@@ -1,6 +1,6 @@
-const SPEED_X = 0.05;
-const SPEED_Y = 0.15;
-const SPEED_Z = 0.10;
+let SPEED_X = 0.00;
+let SPEED_Y = -0.01;
+let SPEED_Z = 0.0;
 
 const POINT_3D = function(x, y, z) {
     this.x = x;
@@ -17,8 +17,6 @@ let canvasContext = canvas.getContext("2d")
 canvasContext.fillStyle = "black"
 canvasContext.strokeStyle = "white"
 canvasContext.lineWidth = 1
-//canvasContext.lineCap = "round"
-
 
 let cubeCenterX = canvas.width / 2
 let cubeCenterY = canvas.height / 2
@@ -55,7 +53,7 @@ function loop(timeNow){
 
     canvasContext.fillRect(0, 0, canvas.width, canvas.height)
 
-    // X Axis
+    // X Axis Rotation
     let angle = timeDelta * 0.001 * SPEED_X * Math.PI * 2
     for(let vertex of vertices) {
         let dy = vertex.y - cubeCenterY;
@@ -66,7 +64,7 @@ function loop(timeNow){
         vertex.z = z + cubeCenterZ;
     }
 
-    // Y Axis
+    // Y Axis Rotation
     angle = timeDelta * 0.001 * SPEED_Y * Math.PI * 2
     for(let vertex of vertices) {
         let dx = vertex.x - cubeCenterX;
@@ -77,7 +75,7 @@ function loop(timeNow){
         vertex.z = z + cubeCenterZ;
     }
 
-    // Z Axis
+    // Z Axis Rotation
     angle = timeDelta * 0.001 * SPEED_Z * Math.PI * 2
     for(let vertex of vertices) {
         let dx = vertex.x - cubeCenterX;
@@ -115,7 +113,6 @@ window.addEventListener("resize", () => {
     cubeCenterY = canvas.height / 2
     cubeCenterZ = 0
     cubeSize = Math.min(canvas.height / 4, canvas.width / 4)
-    console.log("ola")
 
     vertices = [
         new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize),
@@ -135,3 +132,56 @@ window.addEventListener("resize", () => {
     ];
     
 })
+
+
+    // Función para manejar el evento del ratón
+    function handleMouseMove(event) {
+      // Obtener la velocidad del ratón en los ejes X e Y
+      let mouseXSpeed = event.movementX;
+      let mouseYSpeed = event.movementY;
+
+      // Actualizar las velocidades sumando o restando el valor del movimiento del ratón
+      SPEED_X += mouseYSpeed * 0.005; // Puedes ajustar este factor para aumentar o disminuir la sensibilidad
+      SPEED_Y -= mouseXSpeed * 0.005;
+
+      // Limitar las velocidades máximas y mínimas
+      SPEED_X = Math.min(Math.max(SPEED_X, -0.5), 0.5);
+      SPEED_Y = Math.min(Math.max(SPEED_Y, -0.5), 0.5);
+    }
+
+    // Función para reducir gradualmente las velocidades cuando el ratón está quieto
+    function reduceSpeed() {
+      if (Math.abs(SPEED_X) !== 0.05) {
+        if (SPEED_X > 0){
+            SPEED_X += (0.05 - SPEED_X) * 0.05;
+        } else {
+            SPEED_X -= (0.05 + SPEED_X) * 0.05;
+        }
+        
+      }
+
+      if (Math.abs(SPEED_Y) !== 0.05) {
+        if (SPEED_Y > 0){
+            SPEED_Y += (0.05 - SPEED_Y) * 0.05;
+        } else {
+            SPEED_Y -= (0.05 + SPEED_Y) * 0.05;
+        }
+      }
+    }
+
+    // Evento para manejar el movimiento del ratón
+    window.addEventListener("mousemove", handleMouseMove);
+
+    // Evento para reducir gradualmente las velocidades cuando el ratón está fuera de la pantalla
+    window.addEventListener("mouseout", function() {
+      window.requestAnimationFrame(reduceSpeed);
+    });
+
+    // Función para actualizar las velocidades periódicamente y reducir su valor cuando el ratón está fuera de la pantalla
+    function updateSpeed() {
+      reduceSpeed();
+      window.requestAnimationFrame(updateSpeed);
+    }
+
+    // Iniciar el bucle para actualizar las velocidades
+    updateSpeed();
