@@ -116,7 +116,7 @@ body {
 }
 
 .screen.off {
-  animation: screenoff 1s linear forwards;
+  animation: screenoff 0.75s linear forwards;
 }
 
 #screen-container {
@@ -124,7 +124,7 @@ body {
     flex-direction: column;
     justify-content: center;
     height: 100vh;
-    background-color: #0F0F0F;
+    background-color: var(--smoky-black);
 }
 
 
@@ -202,9 +202,6 @@ body {
 }
 
 @keyframes screenoff {
-  10% {
-    background: black;
-  }
   60% {
     height: 40px;
     border-radius: 0%;
