@@ -84,6 +84,7 @@ function resetScreen() {
     if (screen) {
       screen.remove();
     }
+    window.location.href = 'cube.html';
   }, 1000);
 }
 
@@ -93,6 +94,7 @@ function turnOffTV() {
   adjustMinHeightToZero(screen)
   screen.classList.toggle("off")
   resetScreen()
+  
 }
 
 document.getElementById("start-button").addEventListener("click", turnOffTV)
