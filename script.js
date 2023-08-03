@@ -1,12 +1,19 @@
 const startButton = document.getElementById("start-button");
 
 startButton.addEventListener("mouseover", () => {
-    startButton.src = "assets/images/start-button-1.png";
-  });
+  startButton.src = "assets/images/start-button-1.png";
+});
 
-  startButton.addEventListener("mouseout", () => {
+startButton.addEventListener("mouseout", () => {
+  startButton.src = "assets/images/start-button-0.png";
+});
+
+startButton.addEventListener("touchstart", () =>{
+  startButton.src = "assets/images/start-button-1.png";
+  setTimeout(() => {
     startButton.src = "assets/images/start-button-0.png";
-  });
+  }, 250);
+});
 
 
 
@@ -14,7 +21,8 @@ startButton.addEventListener("mouseover", () => {
 
 
 
-function consoleText(words, ids) {
+
+function writeText(words, ids) {
   var currentIndex = 0; // Índice para controlar el elemento actual
 
   function animateText() {
@@ -50,10 +58,16 @@ function consoleText(words, ids) {
   
 }
 
-// Uso de la función
-consoleText(
+writeText(
   ['Roi Castro', 'Web developer'],
   ['title-name', 'subtitle']
 );
 
 
+function turnOffTV() {
+  let screen = document.getElementsByClassName("screen")[0];
+  screen.remove()
+  
+}
+
+document.getElementById("start-button").addEventListener("click", turnOffTV)

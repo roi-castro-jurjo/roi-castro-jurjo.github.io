@@ -76,6 +76,7 @@ body {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    
      
 }
 
@@ -106,8 +107,8 @@ body {
     max-width: 100%;
     text-overflow: ellipsis;
     min-height: 1.3em;
-
 }
+
 
 .screen h2, .screen h3, .screen h4 {
     font-weight: 400;
@@ -132,11 +133,17 @@ body {
     text-align: center;
 }
 
-
-
 .container-glitch * {
     animation:
         5s distort 10s infinite alternate;
+}
+
+#start-button {
+    border-radius: 45%;
+    cursor: pointer;
+    width: 10vw;
+    min-width: 100px;
+    margin-top: 15vh;
 }
 
 @keyframes crt {
@@ -188,10 +195,5 @@ body {
     }
 }
 
-#start-button {
-    border-radius: 45%;
-    cursor: pointer;
-    width: 10vw;
-    min-width: 100px;
-    margin-top: 15vh;
-}
+
+
