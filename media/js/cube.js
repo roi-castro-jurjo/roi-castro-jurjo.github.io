@@ -99,3 +99,39 @@ function loop(timeNow){
     requestAnimationFrame(loop)
     
 }
+
+// Reset the cube when window is resized
+window.addEventListener("resize", () => {
+    canvas.width = document.documentElement.clientWidth * 2;
+    canvas.height = document.documentElement.clientHeight * 2;
+
+    canvasContext = canvas.getContext("2d")
+
+    canvasContext.fillStyle = "black"
+    canvasContext.strokeStyle = "white"
+    canvasContext.lineWidth = 1
+
+    cubeCenterX = canvas.width / 2
+    cubeCenterY = canvas.height / 2
+    cubeCenterZ = 0
+    cubeSize = Math.min(canvas.height / 4, canvas.width / 4)
+    console.log("ola")
+
+    vertices = [
+        new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize),
+        new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize),
+        new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize),
+        new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize),
+        new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize),
+        new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize),
+        new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize),
+        new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)
+    ];
+
+    edges = [
+        [0, 1], [1, 2], [2, 3], [3, 0], // back face
+        [4, 5], [5, 6], [6, 7], [7, 4], // front face
+        [0, 4], [1, 5], [2, 6], [3, 7] // connecting sides
+    ];
+    
+})
