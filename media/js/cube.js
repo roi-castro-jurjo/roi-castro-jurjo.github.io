@@ -133,55 +133,82 @@ window.addEventListener("resize", () => {
     
 })
 
+// Variables para el seguimiento del dedo táctil
+let lastTouchX = null;
+let lastTouchY = null;
 
-    // Función para manejar el evento del ratón
-    function handleMouseMove(event) {
-      // Obtener la velocidad del ratón en los ejes X e Y
-      let mouseXSpeed = event.movementX;
-      let mouseYSpeed = event.movementY;
 
-      // Actualizar las velocidades sumando o restando el valor del movimiento del ratón
-      SPEED_X += mouseYSpeed * 0.005; // Puedes ajustar este factor para aumentar o disminuir la sensibilidad
-      SPEED_Y -= mouseXSpeed * 0.005;
+// Función para manejar el evento del ratón
+function handleMouseMove(event) {
 
-      // Limitar las velocidades máximas y mínimas
-      SPEED_X = Math.min(Math.max(SPEED_X, -0.5), 0.5);
-      SPEED_Y = Math.min(Math.max(SPEED_Y, -0.5), 0.5);
-    }
+    // Obtener la velocidad del ratón en los ejes X e Y
+    let mouseXSpeed = 0
+    let mouseYSpeed = 0
 
-    // Función para reducir gradualmente las velocidades cuando el ratón está quieto
-    function reduceSpeed() {
-      if (Math.abs(SPEED_X) !== 0.05) {
-        if (SPEED_X > 0){
-            SPEED_X += (0.05 - SPEED_X) * 0.05;
-        } else {
-            SPEED_X -= (0.05 + SPEED_X) * 0.05;
+    if (event.type == "mousemove") {
+        // Evento del ratón
+        mouseXSpeed = event.movementX;
+        mouseYSpeed = event.movementY;
+      } else if (event.type === "touchmove") {
+        // Evento táctil
+        const touch = event.touches[0];
+        if (lastTouchX !== null && lastTouchY !== null) {
+          mouseXSpeed = touch.clientX - lastTouchX;
+          mouseYSpeed = touch.clientY - lastTouchY;
         }
-        
+        // Actualizar la última posición del dedo táctil
+        lastTouchX = touch.clientX;
+        lastTouchY = touch.clientY;
       }
 
-      if (Math.abs(SPEED_Y) !== 0.05) {
-        if (SPEED_Y > 0){
-            SPEED_Y += (0.05 - SPEED_Y) * 0.05;
-        } else {
-            SPEED_Y -= (0.05 + SPEED_Y) * 0.05;
-        }
-      }
+    // Actualizar las velocidades sumando o restando el valor del movimiento del ratón
+    SPEED_X += mouseYSpeed * 0.005; 
+    SPEED_Y -= mouseXSpeed * 0.005;
+
+    // Limitar las velocidades máximas y mínimas
+    SPEED_X = Math.min(Math.max(SPEED_X, -0.5), 0.5);
+    SPEED_Y = Math.min(Math.max(SPEED_Y, -0.5), 0.5);
+}
+
+// Función para reducir gradualmente las velocidades cuando el ratón está quieto
+function reduceSpeed() {
+    if (Math.abs(SPEED_X) !== 0.05) {
+    if (SPEED_X > 0){
+        SPEED_X += (0.05 - SPEED_X) * 0.05;
+    } else {
+        SPEED_X -= (0.05 + SPEED_X) * 0.05;
+    }
+    
     }
 
-    // Evento para manejar el movimiento del ratón
-    window.addEventListener("mousemove", handleMouseMove);
-
-    // Evento para reducir gradualmente las velocidades cuando el ratón está fuera de la pantalla
-    window.addEventListener("mouseout", function() {
-      window.requestAnimationFrame(reduceSpeed);
-    });
-
-    // Función para actualizar las velocidades periódicamente y reducir su valor cuando el ratón está fuera de la pantalla
-    function updateSpeed() {
-      reduceSpeed();
-      window.requestAnimationFrame(updateSpeed);
+    if (Math.abs(SPEED_Y) !== 0.05) {
+    if (SPEED_Y > 0){
+        SPEED_Y += (0.05 - SPEED_Y) * 0.05;
+    } else {
+        SPEED_Y -= (0.05 + SPEED_Y) * 0.05;
     }
+    }
+}
 
-    // Iniciar el bucle para actualizar las velocidades
-    updateSpeed();
+// Evento para manejar el movimiento del ratón
+window.addEventListener("mousemove", handleMouseMove);
+window.addEventListener("touchmove", handleMouseMove);
+
+
+// Evento para reducir gradualmente las velocidades cuando el ratón está fuera de la pantalla
+window.addEventListener("mouseout", function() {
+    window.requestAnimationFrame(reduceSpeed);
+});
+
+window.addEventListener("touchend", function() {
+    window.requestAnimationFrame(reduceSpeed);
+});
+
+// Función para actualizar las velocidades periódicamente y reducir su valor cuando el ratón está fuera de la pantalla
+function updateSpeed() {
+    reduceSpeed();
+    window.requestAnimationFrame(updateSpeed);
+}
+
+// Iniciar el bucle para actualizar las velocidades
+updateSpeed();
