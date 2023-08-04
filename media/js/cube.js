@@ -1,5 +1,5 @@
 let SPEED_X = 0.00;
-let SPEED_Y = -0.01;
+let SPEED_Y = 0.00;
 let SPEED_Z = 0.0;
 
 const POINT_3D = function(x, y, z) {
@@ -24,14 +24,14 @@ let cubeCenterZ = 0
 let cubeSize = Math.min(canvas.height / 4, canvas.width / 4)
 
 let vertices = [
-    new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize),
-    new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize),
-    new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize),
-    new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize),
-    new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize),
-    new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize),
-    new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize),
-    new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)
+    new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize), // -1, -1, -1
+    new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize), // 1, -1, -1
+    new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize), // 1, 1, -1
+    new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize), // -1, 1, -1
+    new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize), // -1, -1, 1
+    new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize), // 1, -1, 1
+    new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize), // 1, 1, 1
+    new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)  // -1, 1, 1
 ];
 
 let edges = [
@@ -40,19 +40,49 @@ let edges = [
     [0, 4], [1, 5], [2, 6], [3, 7] // connecting sides
 ];
 
+let startingEdges = [
+    [0, 1], [2, 3], [4, 5], [6, 7],
+    [8, 9], [10, 11], [12, 13], [14, 15],
+    [16, 17], [18, 19], [20, 21], [22, 23] // connecting sides
+]
+
+let startingVertices = [
+    new POINT_3D(vertices[0].x - document.documentElement.clientWidth, vertices[0].y - document.documentElement.clientHeight, vertices[0].z),
+    new POINT_3D(vertices[1].x - document.documentElement.clientWidth, vertices[1].y - document.documentElement.clientHeight, vertices[1].z),
+    new POINT_3D(vertices[1].x + document.documentElement.clientWidth, vertices[1].y + document.documentElement.clientHeight, vertices[1].z),
+    new POINT_3D(vertices[2].x + document.documentElement.clientWidth, vertices[2].y + document.documentElement.clientHeight, vertices[2].z),
+    new POINT_3D(vertices[2].x - document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
+    new POINT_3D(vertices[3].x - document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
+    new POINT_3D(vertices[2].x - document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
+    new POINT_3D(vertices[3].x - document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
+
+    new POINT_3D(vertices[0].x - document.documentElement.clientWidth, vertices[0].y - document.documentElement.clientHeight, vertices[0].z),
+    new POINT_3D(vertices[1].x - document.documentElement.clientWidth, vertices[1].y - document.documentElement.clientHeight, vertices[1].z),
+    new POINT_3D(vertices[1].x + document.documentElement.clientWidth, vertices[1].y + document.documentElement.clientHeight, vertices[1].z),
+    new POINT_3D(vertices[2].x + document.documentElement.clientWidth, vertices[2].y + document.documentElement.clientHeight, vertices[2].z),
+    new POINT_3D(vertices[2].x - document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
+    new POINT_3D(vertices[3].x - document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
+    new POINT_3D(vertices[2].x - document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
+    new POINT_3D(vertices[3].x - document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
+
+    new POINT_3D(vertices[0].x - document.documentElement.clientWidth, vertices[0].y - document.documentElement.clientHeight, vertices[0].z),
+    new POINT_3D(vertices[1].x - document.documentElement.clientWidth, vertices[1].y - document.documentElement.clientHeight, vertices[1].z),
+    new POINT_3D(vertices[1].x + document.documentElement.clientWidth, vertices[1].y + document.documentElement.clientHeight, vertices[1].z),
+    new POINT_3D(vertices[2].x + document.documentElement.clientWidth, vertices[2].y + document.documentElement.clientHeight, vertices[2].z),
+    new POINT_3D(vertices[2].x - document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
+    new POINT_3D(vertices[3].x - document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
+    new POINT_3D(vertices[2].x - document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
+    new POINT_3D(vertices[3].x - document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
+    
+]
+
+console.log(startingVertices)
 
 
 let timeDelta
 let timeLast = 0
 
-requestAnimationFrame(loop)
-
-function loop(timeNow){
-    timeDelta = timeNow - timeLast
-    timeLast = timeNow
-
-    canvasContext.fillRect(0, 0, canvas.width, canvas.height)
-
+function updateVertexPosition(){
     // X Axis Rotation
     let angle = timeDelta * 0.001 * SPEED_X * Math.PI * 2
     for(let vertex of vertices) {
@@ -85,8 +115,51 @@ function loop(timeNow){
         vertex.x = x + cubeCenterX;
         vertex.y = y + cubeCenterY;
     }
+}
+
+
+function constructCube(timeNow){
+    timeDelta = timeNow - timeLast
+    timeLast = timeNow
+
+    let currentVertex = 0
+
+    canvasContext.fillRect(0, 0, canvas.width, canvas.height)
+
+    updateVertexPosition()
+
 
     
+
+    let SPEED = 10
+
+    for (let edge of startingEdges){
+        let direction = [
+            new POINT_3D(
+                (vertices[edges[startingEdges.indexOf(edge)][0]].x - startingVertices[edge[0]].x),
+                (vertices[edges[startingEdges.indexOf(edge)][0]].y - startingVertices[edge[0]].y),
+                (vertices[edges[startingEdges.indexOf(edge)][0]].z - startingVertices[edge[0]].z)),
+            new POINT_3D(
+                (vertices[edges[startingEdges.indexOf(edge)][1]].x - startingVertices[edge[1]].x),
+                (vertices[edges[startingEdges.indexOf(edge)][1]].y - startingVertices[edge[1]].y),
+                (vertices[edges[startingEdges.indexOf(edge)][1]].z - startingVertices[edge[1]].z))
+        ]
+
+        let directionMagnitude = [
+            Math.sqrt(Math.pow(direction[0].x, 2) + Math.pow(direction[0].y, 2) + Math.pow(direction[0].z, 2)),
+            Math.sqrt(Math.pow(direction[1].x, 2) + Math.pow(direction[1].y, 2) + Math.pow(direction[1].z, 2))
+        ]
+
+        startingVertices[edge[0]].x += direction[0].x / directionMagnitude[0] *  SPEED 
+        startingVertices[edge[0]].y += direction[0].y / directionMagnitude[0] *  SPEED
+        startingVertices[edge[0]].z += direction[0].z / directionMagnitude[0] *  SPEED
+
+        startingVertices[edge[1]].x += direction[1].x / directionMagnitude[1] *  SPEED
+        startingVertices[edge[1]].y += direction[1].y / directionMagnitude[1] *  SPEED
+        startingVertices[edge[1]].z += direction[1].z / directionMagnitude[1] *  SPEED
+    }
+    
+
     for (let edge of edges) {
         canvasContext.beginPath();
         canvasContext.moveTo(vertices[edge[0]].x, vertices[edge[0]].y);
@@ -94,7 +167,39 @@ function loop(timeNow){
         canvasContext.stroke();
     }
 
-    requestAnimationFrame(loop)
+    for(let edge of startingEdges){
+        canvasContext.beginPath();
+        canvasContext.moveTo(startingVertices[edge[0]].x, startingVertices[edge[0]].y);
+        canvasContext.lineTo(startingVertices[edge[1]].x, startingVertices[edge[1]].y);
+        canvasContext.stroke();
+    }
+
+    
+    
+
+    //console.log(startingVertices)
+
+    requestAnimationFrame(constructCube)
+}
+
+
+
+function idle(timeNow){
+    timeDelta = timeNow - timeLast
+    timeLast = timeNow
+
+    canvasContext.fillRect(0, 0, canvas.width, canvas.height)
+
+    updateVertexPosition()
+
+    for (let edge of edges) {
+        canvasContext.beginPath();
+        canvasContext.moveTo(vertices[edge[0]].x, vertices[edge[0]].y);
+        canvasContext.lineTo(vertices[edge[1]].x, vertices[edge[1]].y);
+        canvasContext.stroke();
+    }
+
+    requestAnimationFrame(idle)
     
 }
 
@@ -212,3 +317,6 @@ function updateSpeed() {
 
 // Iniciar el bucle para actualizar las velocidades
 updateSpeed();
+
+//requestAnimationFrame(idle)
+requestAnimationFrame(constructCube)
