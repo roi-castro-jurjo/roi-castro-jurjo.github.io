@@ -43,7 +43,7 @@ let edges = [
 let startingEdges = [
     [0, 1], [2, 3], [4, 5], [6, 7],
     [8, 9], [10, 11], [12, 13], [14, 15],
-    [16, 17], [18, 19], [20, 21], [22, 23] // connecting sides
+    [16, 17], [18, 19], [20, 21], [22, 23]
 ]
 
 let startingVertices = [
@@ -76,7 +76,40 @@ let startingVertices = [
     
 ]
 
-console.log(startingVertices)
+
+function areVerticesEqualWithTolerance(vertex1, vertex2, tolerance) {
+    return (
+        Math.abs(vertex1.x - vertex2.x) <= tolerance &&
+        Math.abs(vertex1.y - vertex2.y) <= tolerance &&
+        Math.abs(vertex1.z - vertex2.z) <= tolerance
+    );
+}
+
+function compareEdgesWithTolerance(edges, startingEdges, vertices, startingVertices, tolerance) {
+    if (edges.length !== startingEdges.length) {
+        return false;
+    }
+
+    for (let i = 0; i < edges.length; i++) {
+        const edge = edges[i];
+        const startingEdge = startingEdges[i];
+
+        const vertex1 = vertices[edge[0]];
+        const vertex2 = vertices[edge[1]];
+
+        const startingVertex1 = startingVertices[startingEdge[0]];
+        const startingVertex2 = startingVertices[startingEdge[1]];
+
+        if (
+            !areVerticesEqualWithTolerance(vertex1, startingVertex1, tolerance) ||
+            !areVerticesEqualWithTolerance(vertex2, startingVertex2, tolerance)
+        ) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 
 let timeDelta
@@ -117,6 +150,37 @@ function updateVertexPosition(){
     }
 }
 
+let SPEED = 3
+let isIdle = false
+
+
+function modifyConstructionSpeed(totalTime) {
+    let initialValue = 15;
+    let accelerationDuration = totalTime * 0.9;
+    let currentTime = 0;
+
+    const interval = setInterval(() => {
+    if (currentTime < accelerationDuration) {
+        let accelerationFactor = 1 - (currentTime / accelerationDuration);
+        let newValue = initialValue * accelerationFactor;
+        SPEED = newValue;
+    } else {
+        let timeAfterAcceleration = currentTime - accelerationDuration;
+        let accelerationFactor = timeAfterAcceleration / (totalTime - accelerationDuration);
+        let newValue = initialValue + (3 - initialValue) * accelerationFactor;
+        SPEED = newValue;
+    }
+
+    currentTime += 8; // Incremento de tiempo en milisegundos
+    if (currentTime > totalTime) {
+        clearInterval(interval);
+    }
+    }, 10);
+}
+
+
+
+
 
 function constructCube(timeNow){
     timeDelta = timeNow - timeLast
@@ -127,11 +191,7 @@ function constructCube(timeNow){
     canvasContext.fillRect(0, 0, canvas.width, canvas.height)
 
     updateVertexPosition()
-
-
     
-
-    let SPEED = 10
 
     for (let edge of startingEdges){
         let direction = [
@@ -160,13 +220,6 @@ function constructCube(timeNow){
     }
     
 
-    for (let edge of edges) {
-        canvasContext.beginPath();
-        canvasContext.moveTo(vertices[edge[0]].x, vertices[edge[0]].y);
-        canvasContext.lineTo(vertices[edge[1]].x, vertices[edge[1]].y);
-        canvasContext.stroke();
-    }
-
     for(let edge of startingEdges){
         canvasContext.beginPath();
         canvasContext.moveTo(startingVertices[edge[0]].x, startingVertices[edge[0]].y);
@@ -174,12 +227,16 @@ function constructCube(timeNow){
         canvasContext.stroke();
     }
 
-    
+    if(compareEdgesWithTolerance(edges, startingEdges, vertices, startingVertices, 10)){
+        isIdle = true
+    }
     
 
-    //console.log(startingVertices)
-
-    requestAnimationFrame(constructCube)
+    if(!isIdle){
+        requestAnimationFrame(constructCube)
+    } else {
+        requestAnimationFrame(idle)
+    }
 }
 
 
@@ -202,6 +259,7 @@ function idle(timeNow){
     requestAnimationFrame(idle)
     
 }
+
 
 // Reset the cube when window is resized
 window.addEventListener("resize", () => {
@@ -245,53 +303,53 @@ let lastTouchY = null;
 
 // Función para manejar el evento del ratón
 function handleMouseMove(event) {
+    if(isIdle){
+        // Obtener la velocidad del ratón en los ejes X e Y
+        let mouseXSpeed = 0
+        let mouseYSpeed = 0
 
-    // Obtener la velocidad del ratón en los ejes X e Y
-    let mouseXSpeed = 0
-    let mouseYSpeed = 0
-
-    if (event.type == "mousemove") {
-        // Evento del ratón
-        mouseXSpeed = event.movementX;
-        mouseYSpeed = event.movementY;
-      } else if (event.type === "touchmove") {
-        // Evento táctil
-        const touch = event.touches[0];
-        if (lastTouchX !== null && lastTouchY !== null) {
-          mouseXSpeed = touch.clientX - lastTouchX;
-          mouseYSpeed = touch.clientY - lastTouchY;
+        if (event.type == "mousemove") {
+            // Evento del ratón
+            mouseXSpeed = event.movementX;
+            mouseYSpeed = event.movementY;
+        } else if (event.type === "touchmove") {
+            // Evento táctil
+            const touch = event.touches[0];
+            if (lastTouchX !== null && lastTouchY !== null) {
+            mouseXSpeed = touch.clientX - lastTouchX;
+            mouseYSpeed = touch.clientY - lastTouchY;
+            }
+            // Actualizar la última posición del dedo táctil
+            lastTouchX = touch.clientX;
+            lastTouchY = touch.clientY;
         }
-        // Actualizar la última posición del dedo táctil
-        lastTouchX = touch.clientX;
-        lastTouchY = touch.clientY;
-      }
 
-    // Actualizar las velocidades sumando o restando el valor del movimiento del ratón
-    SPEED_X += mouseYSpeed * 0.005; 
-    SPEED_Y -= mouseXSpeed * 0.005;
+        // Actualizar las velocidades sumando o restando el valor del movimiento del ratón
+        SPEED_X += mouseYSpeed * 0.005; 
+        SPEED_Y -= mouseXSpeed * 0.005;
 
-    // Limitar las velocidades máximas y mínimas
-    SPEED_X = Math.min(Math.max(SPEED_X, -0.5), 0.5);
-    SPEED_Y = Math.min(Math.max(SPEED_Y, -0.5), 0.5);
+        // Limitar las velocidades máximas y mínimas
+        SPEED_X = Math.min(Math.max(SPEED_X, -0.5), 0.5);
+        SPEED_Y = Math.min(Math.max(SPEED_Y, -0.5), 0.5);
+    }
 }
 
 // Función para reducir gradualmente las velocidades cuando el ratón está quieto
 function reduceSpeed() {
     if (Math.abs(SPEED_X) !== 0.05) {
-    if (SPEED_X > 0){
-        SPEED_X += (0.05 - SPEED_X) * 0.05;
-    } else {
-        SPEED_X -= (0.05 + SPEED_X) * 0.05;
-    }
-    
+        if (SPEED_X > 0){
+            SPEED_X += (0.05 - SPEED_X) * 0.05;
+        } else {
+            SPEED_X -= (0.05 + SPEED_X) * 0.05;
+        }   
     }
 
     if (Math.abs(SPEED_Y) !== 0.05) {
-    if (SPEED_Y > 0){
-        SPEED_Y += (0.05 - SPEED_Y) * 0.05;
-    } else {
-        SPEED_Y -= (0.05 + SPEED_Y) * 0.05;
-    }
+        if (SPEED_Y > 0){
+            SPEED_Y += (0.05 - SPEED_Y) * 0.05;
+        } else {
+            SPEED_Y -= (0.05 + SPEED_Y) * 0.05;
+        }
     }
 }
 
@@ -320,3 +378,4 @@ updateSpeed();
 
 //requestAnimationFrame(idle)
 requestAnimationFrame(constructCube)
+modifyConstructionSpeed(3000);
