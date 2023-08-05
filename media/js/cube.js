@@ -230,6 +230,10 @@ function constructCube(timeNow){
     if(compareEdgesWithTolerance(edges, startingEdges, vertices, startingVertices, 10)){
         isIdle = true
     }
+
+    canvasContext.beginPath();
+    canvasContext.rect(cubeCenterX, cubeCenterY, 10, 10)
+    canvasContext.stroke();
     
 
     if(!isIdle){
@@ -256,6 +260,12 @@ function idle(timeNow){
         canvasContext.stroke();
     }
 
+    canvasContext.beginPath();
+    canvasContext.rect(cubeCenterX, cubeCenterY, 10, 10)
+    canvasContext.stroke();
+
+
+
     requestAnimationFrame(idle)
     
 }
@@ -263,6 +273,7 @@ function idle(timeNow){
 
 // Reset the cube when window is resized
 window.addEventListener("resize", () => {
+
     canvas.width = document.documentElement.clientWidth * 2;
     canvas.height = document.documentElement.clientHeight * 2;
 
@@ -277,21 +288,16 @@ window.addEventListener("resize", () => {
     cubeCenterZ = 0
     cubeSize = Math.min(canvas.height / 4, canvas.width / 4)
 
-    vertices = [
-        new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize),
-        new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize),
-        new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize),
-        new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize),
-        new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize),
-        new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize),
-        new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize),
-        new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)
-    ];
 
-    edges = [
-        [0, 1], [1, 2], [2, 3], [3, 0], // back face
-        [4, 5], [5, 6], [6, 7], [7, 4], // front face
-        [0, 4], [1, 5], [2, 6], [3, 7] // connecting sides
+    vertices = [
+        new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize), // -1, -1, -1
+        new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize), // 1, -1, -1
+        new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize), // 1, 1, -1
+        new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize), // -1, 1, -1
+        new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize), // -1, -1, 1
+        new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize), // 1, -1, 1
+        new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize), // 1, 1, 1
+        new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)  // -1, 1, 1
     ];
     
 })
@@ -373,9 +379,13 @@ function updateSpeed() {
     window.requestAnimationFrame(updateSpeed);
 }
 
-// Iniciar el bucle para actualizar las velocidades
-updateSpeed();
 
-//requestAnimationFrame(idle)
-requestAnimationFrame(constructCube)
-modifyConstructionSpeed(3000);
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Iniciar el bucle para actualizar las velocidades
+    updateSpeed();
+
+    //requestAnimationFrame(idle)
+    requestAnimationFrame(constructCube)
+    modifyConstructionSpeed(3000);
+});
