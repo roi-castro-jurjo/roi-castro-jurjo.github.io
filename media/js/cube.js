@@ -114,6 +114,7 @@ function compareEdgesWithTolerance(edges, startingEdges, vertices, startingVerti
 
 let timeDelta
 let timeLast = 0
+let timeSinceResize = 0
 
 function updateVertexPosition(){
     // X Axis Rotation
@@ -184,6 +185,7 @@ function modifyConstructionSpeed(totalTime) {
 
 function constructCube(timeNow){
     timeDelta = timeNow - timeLast
+    timeSinceResize += timeDelta
     timeLast = timeNow
 
     let currentVertex = 0
@@ -230,10 +232,6 @@ function constructCube(timeNow){
     if(compareEdgesWithTolerance(edges, startingEdges, vertices, startingVertices, 10)){
         isIdle = true
     }
-
-    canvasContext.beginPath();
-    canvasContext.rect(cubeCenterX, cubeCenterY, 10, 10)
-    canvasContext.stroke();
     
 
     if(!isIdle){
@@ -247,6 +245,8 @@ function constructCube(timeNow){
 
 function idle(timeNow){
     timeDelta = timeNow - timeLast
+        timeSinceResize += timeDelta
+
     timeLast = timeNow
 
     canvasContext.fillRect(0, 0, canvas.width, canvas.height)
@@ -259,11 +259,6 @@ function idle(timeNow){
         canvasContext.lineTo(vertices[edge[1]].x, vertices[edge[1]].y);
         canvasContext.stroke();
     }
-
-    canvasContext.beginPath();
-    canvasContext.rect(cubeCenterX, cubeCenterY, 10, 10)
-    canvasContext.stroke();
-
 
 
     requestAnimationFrame(idle)
@@ -299,6 +294,39 @@ window.addEventListener("resize", () => {
         new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize), // 1, 1, 1
         new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)  // -1, 1, 1
     ];
+
+
+    let angle = timeSinceResize * 0.001 * SPEED_X * Math.PI * 2
+    for(let vertex of vertices) {
+        let dy = vertex.y - cubeCenterY;
+        let dz = vertex.z - cubeCenterZ;
+        let y = dy * Math.cos(angle) - dz * Math.sin(angle);
+        let z = dy * Math.sin(angle) + dz * Math.cos(angle);
+        vertex.y = y + cubeCenterY;
+        vertex.z = z + cubeCenterZ;
+    }
+
+    // Y Axis Rotation
+    angle = timeSinceResize * 0.001 * SPEED_Y * Math.PI * 2
+    for(let vertex of vertices) {
+        let dx = vertex.x - cubeCenterX;
+        let dz = vertex.z - cubeCenterZ;
+        let x = dz * Math.sin(angle) + dx * Math.cos(angle);
+        let z = dz * Math.cos(angle) - dx * Math.sin(angle);
+        vertex.x = x + cubeCenterX;
+        vertex.z = z + cubeCenterZ;
+    }
+
+    // Z Axis Rotation
+    angle = timeSinceResize * 0.001 * SPEED_Z * Math.PI * 2
+    for(let vertex of vertices) {
+        let dx = vertex.x - cubeCenterX;
+        let dy = vertex.y - cubeCenterY;
+        let x = dx * Math.cos(angle) - dy * Math.sin(angle);
+        let y = dx * Math.sin(angle) + dy * Math.cos(angle);
+        vertex.x = x + cubeCenterX;
+        vertex.y = y + cubeCenterY;
+    }
     
 })
 
