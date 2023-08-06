@@ -21,7 +21,7 @@ canvasContext.lineWidth = 1
 let cubeCenterX = canvas.width / 2
 let cubeCenterY = canvas.height / 2
 let cubeCenterZ = 0
-let cubeSize = Math.min(canvas.height / 4, canvas.width / 4)
+let cubeSize = Math.min(canvas.height / 5, canvas.width / 5)
 
 let vertices = [
     new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize), // -1, -1, -1

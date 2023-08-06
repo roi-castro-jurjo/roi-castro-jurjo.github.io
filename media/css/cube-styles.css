@@ -27,10 +27,97 @@ canvas {
 #buttons-1 {
     top: 0;
     left: 0;
+    margin-left: 5%;
 }
 
 #buttons-2 {
     top: 0;
     right: 0;
+    margin-right: 5%;
 }
+
+.button {
+    margin: 0 1rem;
+    padding: 1rem 2rem;
+    position: relative;
+    background-color: transparent;
+    border: 1px solid black;
+    color: lightgrey;
+    text-align: center;
+    letter-spacing: 0.15rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    outline: none;
+    cursor: pointer; 
+    width: 70%;
+    height: 10vh;
+}
+
+.button:hover {
+  position: relative;
+  border: 1px solid transparent;
+  background-color: lightgrey;
+  color: black;
+  animation: .07s flicker;
+  animation-iteration-count: 2;
+  transition: all 0.35s cubic-bezier(0.75, 0, 0.25, 1); 
+}
+
+.decorator {
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid transparent;
+  animation: .1s flicker;
+  animation-iteration-count: 3;
+  transition: all 0.35s cubic-bezier(0.75, 0, 0.25, 1); 
+}
+
+.decorator.top {
+  top: -1px;
+  border-top: 1px solid lightgrey; 
+}
+
+.decorator.bottom {
+  bottom: -1px;
+  border-bottom: 1px solid lightgrey; 
+}
+
+.decorator.left {
+  left: -1px;
+  border-left: 1px solid lightgrey; 
+}
+
+.decorator.right {
+  right: -1px;
+  border-right: 1px solid lightgrey; 
+}
+
+.button:hover .decorator.top {
+  top: -0.8rem;
+  border-top: 1px solid lightgrey; 
+}
+
+.button:hover .decorator.bottom {
+  bottom: -0.8rem;
+  border-bottom: 1px solid lightgrey; 
+}
+
+.button:hover .decorator.left {
+  left: -0.8rem;
+  border-left: 1px solid lightgrey; 
+}
+
+.button:hover .decorator.right {
+  right: -0.8rem;
+  border-right: 1px solid lightgrey; 
+}
+
+@keyframes flicker {
+  0%, 50% {
+    opacity: 0; }
+  51%, 100% {
+    opacity: 1; } 
+}
+
 
