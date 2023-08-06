@@ -12,3 +12,25 @@ canvas {
     height: 100vh;
     width: 100%
 }
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    height: 100vh;
+    width: 20vw;
+    position: absolute;
+    background-color: transparent;
+}
+
+#buttons-1 {
+    top: 0;
+    left: 0;
+}
+
+#buttons-2 {
+    top: 0;
+    right: 0;
+}
+
