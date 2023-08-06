@@ -407,8 +407,6 @@ function updateSpeed() {
     window.requestAnimationFrame(updateSpeed);
 }
 
-
-
 document.addEventListener('DOMContentLoaded', function () {
     // Iniciar el bucle para actualizar las velocidades
     updateSpeed();
