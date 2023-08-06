@@ -63,13 +63,16 @@ canvas {
   transition: all 0.35s cubic-bezier(0.75, 0, 0.25, 1); 
 }
 
+#button-1 {
+
+}
+
+
 .decorator {
   position: absolute;
   width: 0.5rem;
   height: 0.5rem;
   border: 1px solid transparent;
-  animation: .1s flicker;
-  animation-iteration-count: 3;
   transition: all 0.35s cubic-bezier(0.75, 0, 0.25, 1); 
 }
 
