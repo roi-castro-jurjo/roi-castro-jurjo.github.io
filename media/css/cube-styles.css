@@ -63,11 +63,6 @@ canvas {
   transition: all 0.35s cubic-bezier(0.75, 0, 0.25, 1); 
 }
 
-#button-1 {
-
-}
-
-
 .decorator {
   position: absolute;
   width: 0.5rem;
