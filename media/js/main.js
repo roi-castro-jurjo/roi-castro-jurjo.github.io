@@ -52,7 +52,7 @@ function writeText(words, ids) {
 
   // Iniciamos la animación sobre el primer elemento al cargar la página
   document.addEventListener('DOMContentLoaded', function () {
-    animateText();
+    setTimeout(animateText(), 500);
   });
 
   
