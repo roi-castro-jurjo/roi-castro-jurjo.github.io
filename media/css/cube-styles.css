@@ -22,6 +22,8 @@ canvas {
     width: 20vw;
     position: absolute;
     background-color: transparent;
+    opacity: 0;
+    animation: appearing 4s forwards;
 }
 
 #buttons-1 {
@@ -62,6 +64,47 @@ canvas {
   animation-iteration-count: 2;
   transition: all 0.35s cubic-bezier(0.75, 0, 0.25, 1); 
 }
+
+.button-frame {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation-iteration-count: 10;
+    transition: all 0.35s cubic-bezier(0.75, 0, 0.25, 1); 
+}
+
+#button-1 {
+    animation: .07s flicker 1.1s;
+    animation-iteration-count: 3;
+}
+
+#button-2 {
+    animation: .07s flicker 1.3s;
+    animation-iteration-count: 3;
+
+}
+
+#button-3 {
+    animation: .07s flicker 1.5s;
+    animation-iteration-count: 3;
+}
+
+#button-4 {
+    animation: .07s flicker 1s;
+    animation-iteration-count: 3;
+}
+
+#button-5 {
+    animation: .07s flicker 1.5s;
+    animation-iteration-count: 3;
+}
+
+#button-6 {
+    animation: .07s flicker 1.4s;
+    animation-iteration-count: 3;
+}
+
 
 .decorator {
   position: absolute;
@@ -113,9 +156,23 @@ canvas {
 
 @keyframes flicker {
   0%, 50% {
-    opacity: 0; }
+    opacity: 0; 
+}
   51%, 100% {
-    opacity: 1; } 
+    opacity: 1; 
+} 
+}
+
+@keyframes appearing {
+    0%{
+        opacity: 0;
+    }
+    80% {
+        opacity: 0.9;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 

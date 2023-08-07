@@ -13,7 +13,7 @@
 - [ ] Make construct animation window size dependant
 - [x] Make resize event mobile compatible
 - [x] Make the cube not start forming until fully loaded page
-- [ ] Set the location at which the edges appear better
+- [x] Set the location at which the edges appear random
 - [ ] Buttons
   - [x] Create layout
   - [x] Design style
