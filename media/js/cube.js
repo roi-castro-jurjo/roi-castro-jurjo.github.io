@@ -51,28 +51,28 @@ let startingVertices = [
     new POINT_3D(vertices[1].x - document.documentElement.clientWidth, vertices[1].y - document.documentElement.clientHeight, vertices[1].z),
     new POINT_3D(vertices[1].x + document.documentElement.clientWidth, vertices[1].y + document.documentElement.clientHeight, vertices[1].z),
     new POINT_3D(vertices[2].x + document.documentElement.clientWidth, vertices[2].y + document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[2].x - document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[3].x - document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
-    new POINT_3D(vertices[2].x - document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[3].x - document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
+    new POINT_3D(vertices[2].x - document.documentElement.clientWidth, vertices[2].y + document.documentElement.clientHeight, vertices[2].z),
+    new POINT_3D(vertices[3].x - document.documentElement.clientWidth, vertices[3].y + document.documentElement.clientHeight, vertices[3].z),
+    new POINT_3D(vertices[2].x + document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
+    new POINT_3D(vertices[3].x + document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
 
     new POINT_3D(vertices[0].x - document.documentElement.clientWidth, vertices[0].y - document.documentElement.clientHeight, vertices[0].z),
     new POINT_3D(vertices[1].x - document.documentElement.clientWidth, vertices[1].y - document.documentElement.clientHeight, vertices[1].z),
     new POINT_3D(vertices[1].x + document.documentElement.clientWidth, vertices[1].y + document.documentElement.clientHeight, vertices[1].z),
     new POINT_3D(vertices[2].x + document.documentElement.clientWidth, vertices[2].y + document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[2].x - document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[3].x - document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
-    new POINT_3D(vertices[2].x - document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[3].x - document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
+    new POINT_3D(vertices[2].x + document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
+    new POINT_3D(vertices[3].x + document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
+    new POINT_3D(vertices[2].x + document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
+    new POINT_3D(vertices[3].x + document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
 
     new POINT_3D(vertices[0].x - document.documentElement.clientWidth, vertices[0].y - document.documentElement.clientHeight, vertices[0].z),
     new POINT_3D(vertices[1].x - document.documentElement.clientWidth, vertices[1].y - document.documentElement.clientHeight, vertices[1].z),
     new POINT_3D(vertices[1].x + document.documentElement.clientWidth, vertices[1].y + document.documentElement.clientHeight, vertices[1].z),
     new POINT_3D(vertices[2].x + document.documentElement.clientWidth, vertices[2].y + document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[2].x - document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[3].x - document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
-    new POINT_3D(vertices[2].x - document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[3].x - document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
+    new POINT_3D(vertices[2].x + document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
+    new POINT_3D(vertices[3].x + document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
+    new POINT_3D(vertices[2].x - document.documentElement.clientWidth, vertices[2].y + document.documentElement.clientHeight, vertices[2].z),
+    new POINT_3D(vertices[3].x - document.documentElement.clientWidth, vertices[3].y + document.documentElement.clientHeight, vertices[3].z),
     
 ]
 
@@ -157,7 +157,7 @@ let isIdle = false
 
 function modifyConstructionSpeed(totalTime) {
     let initialValue = 15;
-    let accelerationDuration = totalTime * 0.9;
+    let accelerationDuration = totalTime * 0.99;
     let currentTime = 0;
 
     const interval = setInterval(() => {

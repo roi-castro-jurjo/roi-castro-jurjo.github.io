@@ -1,6 +1,9 @@
 # PERSONAL PORTFOLIO
 
 ### WELCOME
+- [ ] Add favicon
+  - [ ] Design own favicon
+  - [ ] Make favicon light/dark theme dependant
 - [ ] Fix load whitescreen
 - [x] Add delay to writing animation
 - [x] Add button appearing animation
