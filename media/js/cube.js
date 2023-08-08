@@ -109,10 +109,7 @@ function compareEdgesWithTolerance(edges, startingEdges, vertices, startingVerti
         const startingVertex1 = startingVertices[startingEdge[0]];
         const startingVertex2 = startingVertices[startingEdge[1]];
 
-        if (
-            !areVerticesEqualWithTolerance(vertex1, startingVertex1, tolerance) ||
-            !areVerticesEqualWithTolerance(vertex2, startingVertex2, tolerance)
-        ) {
+        if (!areVerticesEqualWithTolerance(vertex1, startingVertex1, tolerance) || !areVerticesEqualWithTolerance(vertex2, startingVertex2, tolerance)) {
             return false;
         }
     }
@@ -197,13 +194,10 @@ function constructCube(timeNow){
     timeSinceResize += timeDelta
     timeLast = timeNow
 
-    let currentVertex = 0
-
     canvasContext.fillRect(0, 0, canvas.width, canvas.height)
 
     updateVertexPosition()
     
-
     for (let edge of startingEdges){
         let direction = [
             new POINT_3D(
@@ -339,45 +333,36 @@ window.addEventListener("resize", () => {
     
 })
 
-// Variables para el seguimiento del dedo táctil
 let lastTouchX = null;
 let lastTouchY = null;
 
 
-// Función para manejar el evento del ratón
 function handleMouseMove(event) {
     if(isIdle){
-        // Obtener la velocidad del ratón en los ejes X e Y
         let mouseXSpeed = 0
         let mouseYSpeed = 0
 
         if (event.type == "mousemove") {
-            // Evento del ratón
             mouseXSpeed = event.movementX;
             mouseYSpeed = event.movementY;
         } else if (event.type === "touchmove") {
-            // Evento táctil
             const touch = event.touches[0];
             if (lastTouchX !== null && lastTouchY !== null) {
             mouseXSpeed = touch.clientX - lastTouchX;
             mouseYSpeed = touch.clientY - lastTouchY;
             }
-            // Actualizar la última posición del dedo táctil
             lastTouchX = touch.clientX;
             lastTouchY = touch.clientY;
         }
 
-        // Actualizar las velocidades sumando o restando el valor del movimiento del ratón
         SPEED_X += mouseYSpeed * 0.005; 
         SPEED_Y -= mouseXSpeed * 0.005;
 
-        // Limitar las velocidades máximas y mínimas
         SPEED_X = Math.min(Math.max(SPEED_X, -0.5), 0.5);
         SPEED_Y = Math.min(Math.max(SPEED_Y, -0.5), 0.5);
     }
 }
 
-// Función para reducir gradualmente las velocidades cuando el ratón está quieto
 function reduceSpeed() {
     if (Math.abs(SPEED_X) !== 0.05) {
         if (SPEED_X > 0){
@@ -396,12 +381,14 @@ function reduceSpeed() {
     }
 }
 
-// Evento para manejar el movimiento del ratón
+function updateSpeed() {
+    reduceSpeed();
+    window.requestAnimationFrame(updateSpeed);
+}
+
 window.addEventListener("mousemove", handleMouseMove);
 window.addEventListener("touchmove", handleMouseMove);
 
-
-// Evento para reducir gradualmente las velocidades cuando el ratón está fuera de la pantalla
 window.addEventListener("mouseout", function() {
     window.requestAnimationFrame(reduceSpeed);
 });
@@ -410,14 +397,7 @@ window.addEventListener("touchend", function() {
     window.requestAnimationFrame(reduceSpeed);
 });
 
-// Función para actualizar las velocidades periódicamente y reducir su valor cuando el ratón está fuera de la pantalla
-function updateSpeed() {
-    reduceSpeed();
-    window.requestAnimationFrame(updateSpeed);
-}
-
 document.addEventListener('DOMContentLoaded', function () {
-    // Iniciar el bucle para actualizar las velocidades
     updateSpeed();
 
     //requestAnimationFrame(idle)
