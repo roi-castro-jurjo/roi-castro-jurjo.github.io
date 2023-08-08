@@ -40,6 +40,15 @@ let edges = [
     [0, 4], [1, 5], [2, 6], [3, 7] // connecting sides
 ];
 
+let faces = [
+    [4, 5, 6, 7], // front face
+    [0, 1, 2, 3], // back face
+    [5, 1, 2, 6], // right face
+    [0, 4, 7, 3], // left face
+    [4, 5, 1, 0], // bottom face
+    [6, 7, 2, 3]  // top face 
+]
+
 let startingEdges = [
     [0, 1], [2, 3], [4, 5], [6, 7],
     [8, 9], [10, 11], [12, 13], [14, 15],

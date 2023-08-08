@@ -14,16 +14,17 @@
 - [x] Make resize event mobile compatible
 - [x] Make the cube not start forming until fully loaded page
 - [x] Set the location at which the edges appear random
-- [ ] Buttons
+- [x] Buttons
   - [x] Create layout
   - [x] Design style
-  - [ ] Create animations
+  - [x] Create animations
     - [x] Create hover animation
-    - [ ] Create appearing animation
-- [ ] Create smooth loading animation
+    - [x] Create appearing animation
+- [x] Create smooth loading animation
 - [ ] Make cube rotate to corresponding side when hovering a button
 - [ ] Make cube expand to fill whole page when clicking a button
 - [ ] Make exiting page animation
+- [ ] Make layout for mobile
 
 ### 404
 - [ ] Design Error Page (?)
