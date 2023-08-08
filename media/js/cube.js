@@ -324,8 +324,8 @@ function idle(timeNow){
 
 function rotatingToFace(timeNow){
 
-    let auxX = true
-    let auxY = true
+    let auxX = false
+    let auxY = false
     let auxZ = true
 
     let leftTopCorner = new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize)
@@ -333,19 +333,33 @@ function rotatingToFace(timeNow){
     let rightBottomCorner = new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)
     let leftBottomCorner = new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)
 
-    if(Math.abs(vertices[4].x - leftTopCorner.x) <= 5){
+    /*if(Math.abs(vertices[4].x - leftTopCorner.x) <= 10){
         auxY = false
     }
 
-    if(Math.abs(vertices[4].y - leftTopCorner.y) <= 5){
+    if(Math.abs(vertices[4].y - leftTopCorner.y) <= 10){
         auxX = false
     }
 
-    if((Math.abs(vertices[5].x - rightTopCorner.x) <= 5) && (Math.abs(vertices[5].y - rightTopCorner.y) <= 5)){
+    if((Math.abs(vertices[5].x - rightTopCorner.x) <= 10) && (Math.abs(vertices[5].y - rightTopCorner.y) <= 10)){
         auxZ = false
-    }
+    }*/
 
     //console.log(vertices[4].z)
+
+    if(Math.abs(vertices[4].x - vertices[7].x) < 10){
+        auxZ = false
+        auxX = true
+    }
+
+    if((Math.abs(vertices[4].y - leftTopCorner.y) <= 5) && (Math.abs(vertices[7].y - leftBottomCorner.y) <= 5)){
+        auxX = false
+        auxY = true
+    }
+
+    if((Math.abs(vertices[4].x - leftTopCorner.x) <= 5) && (Math.abs(vertices[7].x - leftBottomCorner.x) <= 5)){
+        auxY = false
+    }
 
 
 
@@ -359,7 +373,7 @@ function rotatingToFace(timeNow){
   
     if(auxX){
         // X Axis Rotation
-        let angle = 0.01
+        let angle = 0.1
         totalRotation.x = 0
         for(let vertex of vertices) {
             let dy = vertex.y - cubeCenterY;
@@ -372,9 +386,9 @@ function rotatingToFace(timeNow){
     }
 
 
-    if(auxY && !auxX){
+    if(auxY){
         // Y Axis Rotation
-        angle = 0.01
+        angle = 0.1
         totalRotation.y = 0
         for(let vertex of vertices) {
             let dx = vertex.x - cubeCenterX;
@@ -386,9 +400,9 @@ function rotatingToFace(timeNow){
         }
     }
 
-    if(!auxY && auxZ){
+    if(auxZ){
         // Z Axis Rotation
-        angle = 0.01
+        angle = 0.1
         totalRotation.z += angle
         for(let vertex of vertices) {
             let dx = vertex.x - cubeCenterX;
@@ -424,8 +438,10 @@ function rotatingToFace(timeNow){
         canvasContext.stroke();
     }
 
+    canvasContext.fillStyle = "white"
+
     canvasContext.beginPath();
-    canvasContext.rect(vertices[4].x, vertices[4].y, 10, 10)
+    canvasContext.fillRect(vertices[4].x, vertices[4].y, 10, 10)
     canvasContext.stroke()
 
     canvasContext.beginPath();
@@ -448,13 +464,20 @@ function rotatingToFace(timeNow){
     canvasContext.rect(rightBottomCorner.x, rightBottomCorner.y, 10, 10)
     canvasContext.stroke()
 
+        canvasContext.fillStyle = "blue"
+
+
     canvasContext.beginPath();
-    canvasContext.rect(vertices[7].x, vertices[7].y, 10, 10)
+    canvasContext.fillRect(vertices[7].x, vertices[7].y, 10, 10)
     canvasContext.stroke()
+
 
     canvasContext.beginPath();
     canvasContext.rect(leftBottomCorner.x, leftBottomCorner.y, 10, 10)
     canvasContext.stroke()
+
+    canvasContext.fillStyle = "black"
+
 
 
     if(isRotatingToFace == null){
