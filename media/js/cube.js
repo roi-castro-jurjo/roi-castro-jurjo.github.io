@@ -404,3 +404,10 @@ document.addEventListener('DOMContentLoaded', function () {
     requestAnimationFrame(constructCube)
     modifyConstructionSpeed(3000);
 });
+
+let homeButton = document.getElementById("button-1")
+let aboutButton = document.getElementById("button-2")
+let currentWorkButton = document.getElementById("button-3")
+let myWorkButton = document.getElementById("button-4")
+let shareButton = document.getElementById("button-5")
+let contactButton = document.getElementById("button-6")
