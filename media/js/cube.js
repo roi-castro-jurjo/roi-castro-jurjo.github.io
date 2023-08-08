@@ -85,6 +85,12 @@ let startingVertices = [
     
 ]
 
+let totalRotation = {
+    x : 0,
+    y : 0,
+    z: 0
+}
+
 
 function areVerticesEqualWithTolerance(vertex1, vertex2, tolerance) {
     return (
@@ -125,6 +131,7 @@ let timeSinceResize = 0
 function updateVertexPosition(){
     // X Axis Rotation
     let angle = timeDelta * 0.001 * SPEED_X * Math.PI * 2
+    totalRotation.x += angle
     for(let vertex of vertices) {
         let dy = vertex.y - cubeCenterY;
         let dz = vertex.z - cubeCenterZ;
@@ -136,6 +143,7 @@ function updateVertexPosition(){
 
     // Y Axis Rotation
     angle = timeDelta * 0.001 * SPEED_Y * Math.PI * 2
+    totalRotation.y += angle
     for(let vertex of vertices) {
         let dx = vertex.x - cubeCenterX;
         let dz = vertex.z - cubeCenterZ;
@@ -147,6 +155,7 @@ function updateVertexPosition(){
 
     // Z Axis Rotation
     angle = timeDelta * 0.001 * SPEED_Z * Math.PI * 2
+    totalRotation.z += angle
     for(let vertex of vertices) {
         let dx = vertex.x - cubeCenterX;
         let dy = vertex.y - cubeCenterY;
@@ -155,6 +164,7 @@ function updateVertexPosition(){
         vertex.x = x + cubeCenterX;
         vertex.y = y + cubeCenterY;
     }
+
 }
 
 let SPEED = 3
@@ -248,7 +258,7 @@ function constructCube(timeNow){
 
 function idle(timeNow){
     timeDelta = timeNow - timeLast
-        timeSinceResize += timeDelta
+    timeSinceResize += timeDelta
 
     timeLast = timeNow
 
@@ -264,8 +274,194 @@ function idle(timeNow){
     }
 
 
-    requestAnimationFrame(idle)
+    if(isRotatingToFace == null){
+        requestAnimationFrame(idle)
+    } else {
+        requestAnimationFrame(rotatingToFace)
+    }
+
+
+    let leftTopCorner = new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize)
+    let rightTopCorner = new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize)
+    let rightBottomCorner = new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)
+    let leftBottomCorner = new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)
+
+
+    canvasContext.beginPath();
+    canvasContext.rect(vertices[4].x, vertices[4].y, 10, 10)
+    canvasContext.stroke()
+
+    canvasContext.beginPath();
+    canvasContext.rect(leftTopCorner.x, leftTopCorner.y, 10, 10)
+    canvasContext.stroke()
+
+    canvasContext.beginPath();
+    canvasContext.rect(vertices[5].x, vertices[5].y, 10, 10)
+    canvasContext.stroke()
+
+
+    canvasContext.beginPath();
+    canvasContext.rect(rightTopCorner.x, rightTopCorner.y, 10, 10)
+    canvasContext.stroke()
+
+    canvasContext.beginPath();
+    canvasContext.rect(vertices[6].x, vertices[6].y, 10, 10)
+    canvasContext.stroke()
+
+    canvasContext.beginPath();
+    canvasContext.rect(rightBottomCorner.x, rightBottomCorner.y, 10, 10)
+    canvasContext.stroke()
+
+    canvasContext.beginPath();
+    canvasContext.rect(vertices[7].x, vertices[7].y, 10, 10)
+    canvasContext.stroke()
+
+    canvasContext.beginPath();
+    canvasContext.rect(leftBottomCorner.x, leftBottomCorner.y, 10, 10)
+    canvasContext.stroke()
     
+}
+
+function rotatingToFace(timeNow){
+
+    let auxX = true
+    let auxY = true
+    let auxZ = true
+
+    let leftTopCorner = new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize)
+    let rightTopCorner = new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize)
+    let rightBottomCorner = new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)
+    let leftBottomCorner = new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)
+
+    if(Math.abs(vertices[4].x - leftTopCorner.x) <= 5){
+        auxY = false
+    }
+
+    if(Math.abs(vertices[4].y - leftTopCorner.y) <= 5){
+        auxX = false
+    }
+
+    if((Math.abs(vertices[5].x - rightTopCorner.x) <= 5) && (Math.abs(vertices[5].y - rightTopCorner.y) <= 5)){
+        auxZ = false
+    }
+
+    //console.log(vertices[4].z)
+
+
+
+    timeDelta = timeNow - timeLast
+    timeSinceResize += timeDelta
+
+    timeLast = timeNow
+
+    canvasContext.fillRect(0, 0, canvas.width, canvas.height)
+
+  
+    if(auxX){
+        // X Axis Rotation
+        let angle = 0.01
+        totalRotation.x = 0
+        for(let vertex of vertices) {
+            let dy = vertex.y - cubeCenterY;
+            let dz = vertex.z - cubeCenterZ;
+            let y = dy * Math.cos(angle) - dz * Math.sin(angle);
+            let z = dy * Math.sin(angle) + dz * Math.cos(angle);
+            vertex.y = y + cubeCenterY;
+            vertex.z = z + cubeCenterZ;
+        }
+    }
+
+
+    if(auxY && !auxX){
+        // Y Axis Rotation
+        angle = 0.01
+        totalRotation.y = 0
+        for(let vertex of vertices) {
+            let dx = vertex.x - cubeCenterX;
+            let dz = vertex.z - cubeCenterZ;
+            let x = dz * Math.sin(angle) + dx * Math.cos(angle);
+            let z = dz * Math.cos(angle) - dx * Math.sin(angle);
+            vertex.x = x + cubeCenterX;
+            vertex.z = z + cubeCenterZ;
+        }
+    }
+
+    if(!auxY && auxZ){
+        // Z Axis Rotation
+        angle = 0.01
+        totalRotation.z += angle
+        for(let vertex of vertices) {
+            let dx = vertex.x - cubeCenterX;
+            let dy = vertex.y - cubeCenterY;
+            let x = dx * Math.cos(angle) - dy * Math.sin(angle);
+            let y = dx * Math.sin(angle) + dy * Math.cos(angle);
+            vertex.x = x + cubeCenterX;
+            vertex.y = y + cubeCenterY;
+        }
+    }
+
+
+
+    
+    
+
+
+
+    //console.log("x: " + Math.abs(vertices[0].x - leftTopCorner.x))
+    //console.log("y: " + Math.abs(vertices[0].y - leftTopCorner.y))
+
+
+
+
+    
+
+
+
+    for (let edge of edges) {
+        canvasContext.beginPath();
+        canvasContext.moveTo(vertices[edge[0]].x, vertices[edge[0]].y);
+        canvasContext.lineTo(vertices[edge[1]].x, vertices[edge[1]].y);
+        canvasContext.stroke();
+    }
+
+    canvasContext.beginPath();
+    canvasContext.rect(vertices[4].x, vertices[4].y, 10, 10)
+    canvasContext.stroke()
+
+    canvasContext.beginPath();
+    canvasContext.rect(leftTopCorner.x, leftTopCorner.y, 10, 10)
+    canvasContext.stroke()
+
+    canvasContext.beginPath();
+    canvasContext.rect(vertices[5].x, vertices[5].y, 10, 10)
+    canvasContext.stroke()
+
+    canvasContext.beginPath();
+    canvasContext.rect(rightTopCorner.x, rightTopCorner.y, 10, 10)
+    canvasContext.stroke()
+
+    canvasContext.beginPath();
+    canvasContext.rect(vertices[6].x, vertices[6].y, 10, 10)
+    canvasContext.stroke()
+
+    canvasContext.beginPath();
+    canvasContext.rect(rightBottomCorner.x, rightBottomCorner.y, 10, 10)
+    canvasContext.stroke()
+
+    canvasContext.beginPath();
+    canvasContext.rect(vertices[7].x, vertices[7].y, 10, 10)
+    canvasContext.stroke()
+
+    canvasContext.beginPath();
+    canvasContext.rect(leftBottomCorner.x, leftBottomCorner.y, 10, 10)
+    canvasContext.stroke()
+
+
+    if(isRotatingToFace == null){
+        requestAnimationFrame(idle)
+    } else {
+        requestAnimationFrame(rotatingToFace)
+    }
 }
 
 
@@ -411,3 +607,19 @@ let currentWorkButton = document.getElementById("button-3")
 let myWorkButton = document.getElementById("button-4")
 let shareButton = document.getElementById("button-5")
 let contactButton = document.getElementById("button-6")
+
+let buttonArray = [homeButton, aboutButton, currentWorkButton, myWorkButton, shareButton, contactButton]
+
+function rotateToFace(event) {
+    isRotatingToFace = event.currentTarget.face
+}
+
+let isRotatingToFace = null;
+
+for(let button of buttonArray){
+    button.face = buttonArray.indexOf(button)
+    button.addEventListener("mouseover", rotateToFace)
+    button.addEventListener("mouseout", () => {
+        isRotatingToFace = null
+    })
+}
