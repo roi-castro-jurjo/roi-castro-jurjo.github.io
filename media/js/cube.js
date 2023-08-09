@@ -322,6 +322,26 @@ function idle(timeNow){
     
 }
 
+function tieneAdyacenteIgual(array) {
+  for (let i = 0; i < array.length; i++) {
+    const prevIndex = (i - 1 + array.length) % array.length;
+    const nextIndex = (i + 1) % array.length;
+
+    let faceVertices = []
+
+    for(let index in array){
+        faceVertices.push(vertices[index])
+    }
+
+    
+    if (Math.abs(faceVertices[i].y - faceVertices[prevIndex].y) < 15 || Math.abs(faceVertices[i].y - faceVertices[nextIndex].y) < 15) {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
 function rotatingToFace(timeNow){
 
     let auxX = false
@@ -347,19 +367,36 @@ function rotatingToFace(timeNow){
 
     //console.log(vertices[4].z)
 
-    if(Math.abs(vertices[4].x - vertices[7].x) < 10){
+    if(Math.abs(vertices[4].x - vertices[7].x) < 15 || Math.abs(vertices[4].x - vertices[5].x) < 15){
         auxZ = false
         auxX = true
     }
 
-    if((Math.abs(vertices[4].y - leftTopCorner.y) <= 5) && (Math.abs(vertices[7].y - leftBottomCorner.y) <= 5)){
+    if(tieneAdyacenteIgual(faces[0])){
         auxX = false
         auxY = true
     }
 
-    if((Math.abs(vertices[4].x - leftTopCorner.x) <= 5) && (Math.abs(vertices[7].x - leftBottomCorner.x) <= 5)){
-        auxY = false
+    for(let vertexIndex of faces[0]){
+        if(Math.abs(vertices[vertexIndex].x - leftTopCorner.x) < 15){
+            auxY = false
+            break
+        }
     }
+
+    if(!auxX && !auxY && !auxZ){
+        vertices = [
+            new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize), // -1, -1, -1
+            new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize), // 1, -1, -1
+            new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize), // 1, 1, -1
+            new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize), // -1, 1, -1
+            new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize), // -1, -1, 1
+            new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize), // 1, -1, 1
+            new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize), // 1, 1, 1
+            new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)  // -1, 1, 1
+];
+    }
+
 
 
 
