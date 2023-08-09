@@ -43,7 +43,7 @@ let edges = [
 let faces = [
     [4, 5, 6, 7], // front face
     [0, 1, 2, 3], // back face
-    [5, 1, 2, 6], // right face
+    [5, 0, 3, 6], // right face
     [0, 4, 7, 3], // left face
     [4, 5, 1, 0], // bottom face
     [6, 7, 2, 3]  // top face 
@@ -281,7 +281,7 @@ function idle(timeNow){
     }
 
 
-    let leftTopCorner = new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize)
+    /*let leftTopCorner = new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize)
     let rightTopCorner = new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize)
     let rightBottomCorner = new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)
     let leftBottomCorner = new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)
@@ -318,31 +318,46 @@ function idle(timeNow){
 
     canvasContext.beginPath();
     canvasContext.rect(leftBottomCorner.x, leftBottomCorner.y, 10, 10)
-    canvasContext.stroke()
+    canvasContext.stroke()*/
     
 }
 
-function tieneAdyacenteIgual(array) {
-  for (let i = 0; i < array.length; i++) {
-    const prevIndex = (i - 1 + array.length) % array.length;
-    const nextIndex = (i + 1) % array.length;
+function tieneAdyacenteIgual(array, axis) {
+    if(array != null){
+        for (let i = 0; i < array.length; i++) {
+            const prevIndex = (i - 1 + array.length) % array.length;
+            const nextIndex = (i + 1) % array.length;
 
-    let faceVertices = []
+            let faceVertices = []
 
-    for(let index in array){
-        faceVertices.push(vertices[index])
+            for(let index in array){
+                faceVertices.push(vertices[index])
+            }
+
+            if(axis == "x"){
+                if (Math.abs(faceVertices[i].x - faceVertices[prevIndex].x) < 15 || Math.abs(faceVertices[i].x - faceVertices[nextIndex].x) < 15) {
+                    return true;
+                }
+            } else if (axis == "y"){
+                if (Math.abs(faceVertices[i].y - faceVertices[prevIndex].y) < 15 || Math.abs(faceVertices[i].y - faceVertices[nextIndex].y) < 15) {
+                    return true;
+                }
+            }
     }
 
     
-    if (Math.abs(faceVertices[i].y - faceVertices[prevIndex].y) < 15 || Math.abs(faceVertices[i].y - faceVertices[nextIndex].y) < 15) {
-      return true;
-    }
+
   }
   
   return false;
 }
 
 function rotatingToFace(timeNow){
+
+    if(isRotatingToFace == null){
+        requestAnimationFrame(idle)
+        return
+    }
 
     let auxX = false
     let auxY = false
@@ -367,20 +382,22 @@ function rotatingToFace(timeNow){
 
     //console.log(vertices[4].z)
 
-    if(Math.abs(vertices[4].x - vertices[7].x) < 15 || Math.abs(vertices[4].x - vertices[5].x) < 15){
+    if(isRotatingToFace != null && tieneAdyacenteIgual(faces[isRotatingToFace], "x")){
         auxZ = false
         auxX = true
     }
 
-    if(tieneAdyacenteIgual(faces[0])){
+    if(isRotatingToFace != null && tieneAdyacenteIgual(faces[isRotatingToFace], "y")){
         auxX = false
         auxY = true
     }
 
-    for(let vertexIndex of faces[0]){
-        if(Math.abs(vertices[vertexIndex].x - leftTopCorner.x) < 15){
-            auxY = false
-            break
+    if(isRotatingToFace != null){
+        for(let vertexIndex of faces[isRotatingToFace]){
+            if(Math.abs(vertices[vertexIndex].x - leftTopCorner.x) < 15){
+                auxY = false
+                break
+            }
         }
     }
 
@@ -394,7 +411,7 @@ function rotatingToFace(timeNow){
             new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize), // 1, -1, 1
             new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize), // 1, 1, 1
             new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)  // -1, 1, 1
-];
+        ];
     }
 
 
@@ -475,7 +492,7 @@ function rotatingToFace(timeNow){
         canvasContext.stroke();
     }
 
-    canvasContext.fillStyle = "white"
+    /*canvasContext.fillStyle = "white"
 
     canvasContext.beginPath();
     canvasContext.fillRect(vertices[4].x, vertices[4].y, 10, 10)
@@ -513,15 +530,11 @@ function rotatingToFace(timeNow){
     canvasContext.rect(leftBottomCorner.x, leftBottomCorner.y, 10, 10)
     canvasContext.stroke()
 
-    canvasContext.fillStyle = "black"
+    canvasContext.fillStyle = "black"*/
 
 
 
-    if(isRotatingToFace == null){
-        requestAnimationFrame(idle)
-    } else {
-        requestAnimationFrame(rotatingToFace)
-    }
+    requestAnimationFrame(rotatingToFace)
 }
 
 

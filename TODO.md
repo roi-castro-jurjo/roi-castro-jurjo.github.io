@@ -7,7 +7,7 @@
 - [ ] Fix load whitescreen
 - [x] Add delay to writing animation
 - [x] Add button appearing animation
-  - [ ] Improve button appearing animation
+  - [x] Improve button appearing animation
 
 ### CUBE
 - [ ] Make construct animation window size dependant
@@ -21,10 +21,13 @@
     - [x] Create hover animation
     - [x] Create appearing animation
 - [x] Create smooth loading animation
+- [x] Make cube face camera when hovering a button
 - [ ] Make cube rotate to corresponding side when hovering a button
+  - [ ] Make it really work
 - [ ] Make cube expand to fill whole page when clicking a button
 - [ ] Make exiting page animation
 - [ ] Make layout for mobile
+- [ ] Clean up js code
 
 ### 404
 - [ ] Design Error Page (?)
