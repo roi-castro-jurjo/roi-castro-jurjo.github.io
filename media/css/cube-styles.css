@@ -175,4 +175,17 @@ canvas {
     }
 }
 
+.preview {
+  position: absolute;
+  width: min(calc(100vw/2.5), calc(100vh/2.5));
+  height: min(calc(100vw/2.5), calc(100vh/2.5));
+  top: calc(50vh - calc(min(calc(100vw/2.5), calc(100vh/2.5))/2));
+  left: calc(50vw - calc(min(calc(100vw/2.5), calc(100vh/2.5))/2));
+
+  margin: 0;
+  padding: 0;
+  display: none;
+
+}
+
 
