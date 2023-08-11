@@ -1,5 +1,7 @@
 # PERSONAL PORTFOLIO
 
+- [ ] Fuse both pages together
+
 ### WELCOME
 - [ ] Add favicon
   - [ ] Design own favicon
@@ -22,12 +24,14 @@
     - [x] Create appearing animation
 - [x] Create smooth loading animation
 - [x] Make cube face camera when hovering a button
-- [ ] Make cube rotate to corresponding side when hovering a button
+- [x] Make cube rotate to corresponding side when hovering a button
   - [ ] Make it really work
 - [ ] Make cube expand to fill whole page when clicking a button
+- [ ] Create Section
+  - [ ] Design Layout
+  - [ ] Design Style
+  - [ ] Write Text
+  - [ ] Gather assets 
 - [ ] Make exiting page animation
 - [ ] Make layout for mobile
 - [ ] Clean up js code
-
-### 404
-- [ ] Design Error Page (?)
