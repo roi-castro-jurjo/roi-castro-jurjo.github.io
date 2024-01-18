@@ -1,698 +1,205 @@
-let SPEED_X = 0.00;
-let SPEED_Y = 0.00;
-let SPEED_Z = 0.0;
+var canvas = document.getElementById('canvasCube');
+GL =  canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
 
-const POINT_3D = function(x, y, z) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-}
+if (!GL)
+    alert("This browser doesn't support WebGL!");
 
-let canvas = document.getElementsByTagName("canvas")[0]
-canvas.width = document.documentElement.clientWidth * 2;
-canvas.height = document.documentElement.clientHeight * 2;
+/*============ Defining and storing the geometry =========*/
 
-let canvasContext = canvas.getContext("2d")
-
-canvasContext.fillStyle = "black"
-canvasContext.strokeStyle = "white"
-canvasContext.lineWidth = 1
-
-let cubeCenterX = canvas.width / 2
-let cubeCenterY = canvas.height / 2
-let cubeCenterZ = 0
-let cubeSize = Math.min(canvas.height / 5, canvas.width / 5)
-
-let vertices = [
-    new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize), // -1, -1, -1
-    new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize), // 1, -1, -1
-    new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize), // 1, 1, -1
-    new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize), // -1, 1, -1
-    new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize), // -1, -1, 1
-    new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize), // 1, -1, 1
-    new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize), // 1, 1, 1
-    new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)  // -1, 1, 1
+var vertices = [
+    -1,-1,-1, 1,-1,-1, 1, 1,-1, -1, 1,-1,
+    -1,-1, 1, 1,-1, 1, 1, 1, 1, -1, 1, 1,
+    -1,-1,-1, -1, 1,-1, -1, 1, 1, -1,-1, 1,
+    1,-1,-1, 1, 1,-1, 1, 1, 1, 1,-1, 1,
+    -1,-1,-1, -1,-1, 1, 1,-1, 1, 1,-1,-1,
+    -1, 1,-1, -1, 1, 1, 1, 1, 1, 1, 1,-1, 
 ];
 
-let edges = [
-    [0, 1], [1, 2], [2, 3], [3, 0], // back face
-    [4, 5], [5, 6], [6, 7], [7, 4], // front face
-    [0, 4], [1, 5], [2, 6], [3, 7] // connecting sides
+var colors = [
+    5,3,7, 5,3,7, 5,3,7, 5,3,7,
+    1,1,3, 1,1,3, 1,1,3, 1,1,3,
+    0,0,1, 0,0,1, 0,0,1, 0,0,1,
+    1,0,0, 1,0,0, 1,0,0, 1,0,0,
+    1,1,0, 1,1,0, 1,1,0, 1,1,0,
+    0,1,0, 0,1,0, 0,1,0, 0,1,0
 ];
 
-let faces = [
-    [4, 5, 6, 7], // front face
-    [0, 1, 2, 3], // back face
-    [5, 0, 3, 6], // right face
-    [0, 4, 7, 3], // left face
-    [4, 5, 1, 0], // bottom face
-    [6, 7, 2, 3]  // top face 
-]
+var indices = [
+    0,1,2, 0,2,3, 4,5,6, 4,6,7,
+    8,9,10, 8,10,11, 12,13,14, 12,14,15,
+    16,17,18, 16,18,19, 20,21,22, 20,22,23 
+];
 
-let startingEdges = [
-    [0, 1], [2, 3], [4, 5], [6, 7],
-    [8, 9], [10, 11], [12, 13], [14, 15],
-    [16, 17], [18, 19], [20, 21], [22, 23]
-]
+// Create and store data into vertex buffer
+var vertex_buffer = GL.createBuffer ();
+GL.bindBuffer(GL.ARRAY_BUFFER, vertex_buffer);
+GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(vertices), GL.STATIC_DRAW);
 
-let startingVertices = [
-    new POINT_3D(vertices[0].x - document.documentElement.clientWidth, vertices[0].y - document.documentElement.clientHeight, vertices[0].z),
-    new POINT_3D(vertices[1].x - document.documentElement.clientWidth, vertices[1].y - document.documentElement.clientHeight, vertices[1].z),
-    new POINT_3D(vertices[1].x + document.documentElement.clientWidth, vertices[1].y + document.documentElement.clientHeight, vertices[1].z),
-    new POINT_3D(vertices[2].x + document.documentElement.clientWidth, vertices[2].y + document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[2].x - document.documentElement.clientWidth, vertices[2].y + document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[3].x - document.documentElement.clientWidth, vertices[3].y + document.documentElement.clientHeight, vertices[3].z),
-    new POINT_3D(vertices[2].x + document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[3].x + document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
+// Create and store data into color buffer
+var color_buffer = GL.createBuffer ();
+GL.bindBuffer(GL.ARRAY_BUFFER, color_buffer);
+GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(colors), GL.STATIC_DRAW);
 
-    new POINT_3D(vertices[0].x - document.documentElement.clientWidth, vertices[0].y - document.documentElement.clientHeight, vertices[0].z),
-    new POINT_3D(vertices[1].x - document.documentElement.clientWidth, vertices[1].y - document.documentElement.clientHeight, vertices[1].z),
-    new POINT_3D(vertices[1].x + document.documentElement.clientWidth, vertices[1].y + document.documentElement.clientHeight, vertices[1].z),
-    new POINT_3D(vertices[2].x + document.documentElement.clientWidth, vertices[2].y + document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[2].x - document.documentElement.clientWidth, vertices[2].y + document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[3].x - document.documentElement.clientWidth, vertices[3].y + document.documentElement.clientHeight, vertices[3].z),
-    new POINT_3D(vertices[2].x + document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[3].x + document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
-
-    new POINT_3D(vertices[0].x - document.documentElement.clientWidth, vertices[0].y - document.documentElement.clientHeight, vertices[0].z),
-    new POINT_3D(vertices[1].x - document.documentElement.clientWidth, vertices[1].y - document.documentElement.clientHeight, vertices[1].z),
-    new POINT_3D(vertices[1].x + document.documentElement.clientWidth, vertices[1].y + document.documentElement.clientHeight, vertices[1].z),
-    new POINT_3D(vertices[2].x + document.documentElement.clientWidth, vertices[2].y + document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[2].x - document.documentElement.clientWidth, vertices[2].y + document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[3].x - document.documentElement.clientWidth, vertices[3].y + document.documentElement.clientHeight, vertices[3].z),
-    new POINT_3D(vertices[2].x + document.documentElement.clientWidth, vertices[2].y - document.documentElement.clientHeight, vertices[2].z),
-    new POINT_3D(vertices[3].x + document.documentElement.clientWidth, vertices[3].y - document.documentElement.clientHeight, vertices[3].z),
-    
-]
-
-let totalRotation = {
-    x : 0,
-    y : 0,
-    z: 0
-}
+// Create and store data into index buffer
+var index_buffer = GL.createBuffer ();
+GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, index_buffer);
+GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), GL.STATIC_DRAW);
 
 
-function areVerticesEqualWithTolerance(vertex1, vertex2, tolerance) {
-    return (
-        Math.abs(vertex1.x - vertex2.x) <= tolerance &&
-        Math.abs(vertex1.y - vertex2.y) <= tolerance &&
-        Math.abs(vertex1.z - vertex2.z) <= tolerance
-    );
-}
 
-function compareEdgesWithTolerance(edges, startingEdges, vertices, startingVertices, tolerance) {
-    if (edges.length !== startingEdges.length) {
-        return false;
+/*=================== Shaders =========================*/
+
+var vertCode  = `
+    attribute vec3 position;
+    uniform mat4 Pmatrix;
+    uniform mat4 Vmatrix;
+    uniform mat4 Mmatrix;
+    attribute vec3 color; // the color of the point
+    varying vec3 vColor;
+
+    void main(void) {
+        gl_Position = Pmatrix * Vmatrix * Mmatrix * vec4(position, 1.);
+        vColor = color;
     }
+`;
+var fragCode  = `
+    precision mediump float;
+    varying vec3 vColor;
 
-    for (let i = 0; i < edges.length; i++) {
-        const edge = edges[i];
-        const startingEdge = startingEdges[i];
-
-        const vertex1 = vertices[edge[0]];
-        const vertex2 = vertices[edge[1]];
-
-        const startingVertex1 = startingVertices[startingEdge[0]];
-        const startingVertex2 = startingVertices[startingEdge[1]];
-
-        if (!areVerticesEqualWithTolerance(vertex1, startingVertex1, tolerance) || !areVerticesEqualWithTolerance(vertex2, startingVertex2, tolerance)) {
-            return false;
-        }
+    void main(void) {
+        gl_FragColor = vec4(vColor, 1.);
     }
+`;
 
-    return true;
-}
+var vertShader = GL.createShader(GL.VERTEX_SHADER);
+GL.shaderSource(vertShader, vertCode);
+GL.compileShader(vertShader);
 
+var fragShader = GL.createShader(GL.FRAGMENT_SHADER);
+GL.shaderSource(fragShader, fragCode);
+GL.compileShader(fragShader);
 
-let timeDelta
-let timeLast = 0
-let timeSinceResize = 0
+var shaderProgram = GL.createProgram();
+GL.attachShader(shaderProgram, vertShader);
+GL.attachShader(shaderProgram, fragShader);
+GL.linkProgram(shaderProgram);
 
-function updateVertexPosition(){
-    // X Axis Rotation
-    let angle = timeDelta * 0.001 * SPEED_X * Math.PI * 2
-    totalRotation.x += angle
-    for(let vertex of vertices) {
-        let dy = vertex.y - cubeCenterY;
-        let dz = vertex.z - cubeCenterZ;
-        let y = dy * Math.cos(angle) - dz * Math.sin(angle);
-        let z = dy * Math.sin(angle) + dz * Math.cos(angle);
-        vertex.y = y + cubeCenterY;
-        vertex.z = z + cubeCenterZ;
-    }
 
-    // Y Axis Rotation
-    angle = timeDelta * 0.001 * SPEED_Y * Math.PI * 2
-    totalRotation.y += angle
-    for(let vertex of vertices) {
-        let dx = vertex.x - cubeCenterX;
-        let dz = vertex.z - cubeCenterZ;
-        let x = dz * Math.sin(angle) + dx * Math.cos(angle);
-        let z = dz * Math.cos(angle) - dx * Math.sin(angle);
-        vertex.x = x + cubeCenterX;
-        vertex.z = z + cubeCenterZ;
-    }
 
-    // Z Axis Rotation
-    angle = timeDelta * 0.001 * SPEED_Z * Math.PI * 2
-    totalRotation.z += angle
-    for(let vertex of vertices) {
-        let dx = vertex.x - cubeCenterX;
-        let dy = vertex.y - cubeCenterY;
-        let x = dx * Math.cos(angle) - dy * Math.sin(angle);
-        let y = dx * Math.sin(angle) + dy * Math.cos(angle);
-        vertex.x = x + cubeCenterX;
-        vertex.y = y + cubeCenterY;
-    }
+/* ====== Associating attributes to vertex shader =====*/
 
-}
+var Pmatrix = GL.getUniformLocation(shaderProgram, "Pmatrix");
+var Vmatrix = GL.getUniformLocation(shaderProgram, "Vmatrix");
+var Mmatrix = GL.getUniformLocation(shaderProgram, "Mmatrix");
 
-let SPEED = 3
-let isIdle = false
+GL.bindBuffer(GL.ARRAY_BUFFER, vertex_buffer);
+var position = GL.getAttribLocation(shaderProgram, "position");
+GL.vertexAttribPointer(position, 3, GL.FLOAT, false,0,0) ;
 
+// Position
+GL.enableVertexAttribArray(position);
+GL.bindBuffer(GL.ARRAY_BUFFER, color_buffer);
+var color = GL.getAttribLocation(shaderProgram, "color");
+GL.vertexAttribPointer(color, 3, GL.FLOAT, false,0,0) ;
 
-function modifyConstructionSpeed(totalTime) {
-    let initialValue = 15;
-    let accelerationDuration = totalTime * 0.99;
-    let currentTime = 0;
+// Color
+GL.enableVertexAttribArray(color);
+GL.useProgram(shaderProgram);
 
-    const interval = setInterval(() => {
-    if (currentTime < accelerationDuration) {
-        let accelerationFactor = 1 - (currentTime / accelerationDuration);
-        let newValue = initialValue * accelerationFactor;
-        SPEED = newValue;
-    } else {
-        let timeAfterAcceleration = currentTime - accelerationDuration;
-        let accelerationFactor = timeAfterAcceleration / (totalTime - accelerationDuration);
-        let newValue = initialValue + (3 - initialValue) * accelerationFactor;
-        SPEED = newValue;
-    }
 
-    currentTime += 8; // Incremento de tiempo en milisegundos
-    if (currentTime > totalTime) {
-        clearInterval(interval);
-    }
-    }, 10);
-}
 
+/*==================== MATRIX =====================*/
 
-
-
-
-function constructCube(timeNow){
-    timeDelta = timeNow - timeLast
-    timeSinceResize += timeDelta
-    timeLast = timeNow
-
-    canvasContext.fillRect(0, 0, canvas.width, canvas.height)
-
-    updateVertexPosition()
-    
-    for (let edge of startingEdges){
-        let direction = [
-            new POINT_3D(
-                (vertices[edges[startingEdges.indexOf(edge)][0]].x - startingVertices[edge[0]].x),
-                (vertices[edges[startingEdges.indexOf(edge)][0]].y - startingVertices[edge[0]].y),
-                (vertices[edges[startingEdges.indexOf(edge)][0]].z - startingVertices[edge[0]].z)),
-            new POINT_3D(
-                (vertices[edges[startingEdges.indexOf(edge)][1]].x - startingVertices[edge[1]].x),
-                (vertices[edges[startingEdges.indexOf(edge)][1]].y - startingVertices[edge[1]].y),
-                (vertices[edges[startingEdges.indexOf(edge)][1]].z - startingVertices[edge[1]].z))
-        ]
-
-        let directionMagnitude = [
-            Math.sqrt(Math.pow(direction[0].x, 2) + Math.pow(direction[0].y, 2) + Math.pow(direction[0].z, 2)),
-            Math.sqrt(Math.pow(direction[1].x, 2) + Math.pow(direction[1].y, 2) + Math.pow(direction[1].z, 2))
-        ]
-
-        startingVertices[edge[0]].x += direction[0].x / directionMagnitude[0] *  SPEED 
-        startingVertices[edge[0]].y += direction[0].y / directionMagnitude[0] *  SPEED
-        startingVertices[edge[0]].z += direction[0].z / directionMagnitude[0] *  SPEED
-
-        startingVertices[edge[1]].x += direction[1].x / directionMagnitude[1] *  SPEED
-        startingVertices[edge[1]].y += direction[1].y / directionMagnitude[1] *  SPEED
-        startingVertices[edge[1]].z += direction[1].z / directionMagnitude[1] *  SPEED
-    }
-    
-
-    for(let edge of startingEdges){
-        canvasContext.beginPath();
-        canvasContext.moveTo(startingVertices[edge[0]].x, startingVertices[edge[0]].y);
-        canvasContext.lineTo(startingVertices[edge[1]].x, startingVertices[edge[1]].y);
-        canvasContext.stroke();
-    }
-
-    if(compareEdgesWithTolerance(edges, startingEdges, vertices, startingVertices, 10)){
-        isIdle = true
-    }
-    
-
-    if(!isIdle){
-        requestAnimationFrame(constructCube)
-    } else {
-        requestAnimationFrame(idle)
-    }
-}
-
-
-
-function idle(timeNow){
-    timeDelta = timeNow - timeLast
-    timeSinceResize += timeDelta
-
-    timeLast = timeNow
-
-    canvasContext.fillRect(0, 0, canvas.width, canvas.height)
-
-    updateVertexPosition()
-
-    for (let edge of edges) {
-        canvasContext.beginPath();
-        canvasContext.moveTo(vertices[edge[0]].x, vertices[edge[0]].y);
-        canvasContext.lineTo(vertices[edge[1]].x, vertices[edge[1]].y);
-        canvasContext.stroke();
-    }
-
-
-    if(isRotatingToFace == null){
-        requestAnimationFrame(idle)
-    } else {
-        requestAnimationFrame(rotatingToFace)
-    }
-
-
-    /*let leftTopCorner = new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize)
-    let rightTopCorner = new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize)
-    let rightBottomCorner = new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)
-    let leftBottomCorner = new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)
-
-
-    canvasContext.beginPath();
-    canvasContext.rect(vertices[4].x, vertices[4].y, 10, 10)
-    canvasContext.stroke()
-
-    canvasContext.beginPath();
-    canvasContext.rect(leftTopCorner.x, leftTopCorner.y, 10, 10)
-    canvasContext.stroke()
-
-    canvasContext.beginPath();
-    canvasContext.rect(vertices[5].x, vertices[5].y, 10, 10)
-    canvasContext.stroke()
-
-
-    canvasContext.beginPath();
-    canvasContext.rect(rightTopCorner.x, rightTopCorner.y, 10, 10)
-    canvasContext.stroke()
-
-    canvasContext.beginPath();
-    canvasContext.rect(vertices[6].x, vertices[6].y, 10, 10)
-    canvasContext.stroke()
-
-    canvasContext.beginPath();
-    canvasContext.rect(rightBottomCorner.x, rightBottomCorner.y, 10, 10)
-    canvasContext.stroke()
-
-    canvasContext.beginPath();
-    canvasContext.rect(vertices[7].x, vertices[7].y, 10, 10)
-    canvasContext.stroke()
-
-    canvasContext.beginPath();
-    canvasContext.rect(leftBottomCorner.x, leftBottomCorner.y, 10, 10)
-    canvasContext.stroke()*/
-    
-}
-
-function tieneAdyacenteIgual(array, axis) {
-    if(array != null){
-        for (let i = 0; i < array.length; i++) {
-            const prevIndex = (i - 1 + array.length) % array.length;
-            const nextIndex = (i + 1) % array.length;
-
-            let faceVertices = []
-
-            for(let index in array){
-                faceVertices.push(vertices[index])
-            }
-
-            if(axis == "x"){
-                if (Math.abs(faceVertices[i].x - faceVertices[prevIndex].x) < 15 || Math.abs(faceVertices[i].x - faceVertices[nextIndex].x) < 15) {
-                    return true;
-                }
-            } else if (axis == "y"){
-                if (Math.abs(faceVertices[i].y - faceVertices[prevIndex].y) < 15 || Math.abs(faceVertices[i].y - faceVertices[nextIndex].y) < 15) {
-                    return true;
-                }
-            }
-    }
-
-    
-
-  }
-  
-  return false;
-}
-
-function rotatingToFace(timeNow){
-
-    if(isRotatingToFace == null){
-        requestAnimationFrame(idle)
-        return
-    }
-
-    let auxX = false
-    let auxY = false
-    let auxZ = true
-
-    let leftTopCorner = new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize)
-    let rightTopCorner = new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize)
-    let rightBottomCorner = new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)
-    let leftBottomCorner = new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)
-
-    /*if(Math.abs(vertices[4].x - leftTopCorner.x) <= 10){
-        auxY = false
-    }
-
-    if(Math.abs(vertices[4].y - leftTopCorner.y) <= 10){
-        auxX = false
-    }
-
-    if((Math.abs(vertices[5].x - rightTopCorner.x) <= 10) && (Math.abs(vertices[5].y - rightTopCorner.y) <= 10)){
-        auxZ = false
-    }*/
-
-    //console.log(vertices[4].z)
-
-    if(isRotatingToFace != null && tieneAdyacenteIgual(faces[isRotatingToFace], "x")){
-        auxZ = false
-        auxX = true
-    }
-
-    if(isRotatingToFace != null && tieneAdyacenteIgual(faces[isRotatingToFace], "y")){
-        auxX = false
-        auxY = true
-    }
-
-    if(isRotatingToFace != null){
-        for(let vertexIndex of faces[isRotatingToFace]){
-            if(Math.abs(vertices[vertexIndex].x - leftTopCorner.x) < 15){
-                auxY = false
-                break
-            }
-        }
-    }
-
-    if(!auxX && !auxY && !auxZ){
-        vertices = [
-            new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize), // -1, -1, -1
-            new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize), // 1, -1, -1
-            new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize), // 1, 1, -1
-            new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize), // -1, 1, -1
-            new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize), // -1, -1, 1
-            new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize), // 1, -1, 1
-            new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize), // 1, 1, 1
-            new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)  // -1, 1, 1
+function get_projection(angle, a, zMin, zMax) {
+    var ang = Math.tan((angle*.5)*Math.PI/180);//angle*.5
+    return [
+            0.5/ang, 0 , 0, 0,
+            0, 0.5*a/ang, 0, 0,
+            0, 0, -(zMax+zMin)/(zMax-zMin), -1,
+            0, 0, (-2*zMax*zMin)/(zMax-zMin), 0 
         ];
-    }
+}
+
+var proj_matrix = get_projection(40, canvas.width/canvas.height, 1, 100);
+
+var mov_matrix = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
+var view_matrix = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
+
+// translating z
+view_matrix[14] = view_matrix[14]-6;//zoom
 
 
 
+/*==================== Rotation ====================*/
 
-    timeDelta = timeNow - timeLast
-    timeSinceResize += timeDelta
+function rotateZ(m, angle) {
+    var c = Math.cos(angle);
+    var s = Math.sin(angle);
+    var mv0 = m[0], mv4 = m[4], mv8 = m[8];
 
-    timeLast = timeNow
+    m[0] = c*m[0]-s*m[1];
+    m[4] = c*m[4]-s*m[5];
+    m[8] = c*m[8]-s*m[9];
 
-    canvasContext.fillRect(0, 0, canvas.width, canvas.height)
+    m[1]=c*m[1]+s*mv0;
+    m[5]=c*m[5]+s*mv4;
+    m[9]=c*m[9]+s*mv8;
+}
 
-  
-    if(auxX){
-        // X Axis Rotation
-        let angle = 0.1
-        totalRotation.x = 0
-        for(let vertex of vertices) {
-            let dy = vertex.y - cubeCenterY;
-            let dz = vertex.z - cubeCenterZ;
-            let y = dy * Math.cos(angle) - dz * Math.sin(angle);
-            let z = dy * Math.sin(angle) + dz * Math.cos(angle);
-            vertex.y = y + cubeCenterY;
-            vertex.z = z + cubeCenterZ;
-        }
-    }
+function rotateX(m, angle) {
+    var c = Math.cos(angle);
+    var s = Math.sin(angle);
+    var mv1 = m[1], mv5 = m[5], mv9 = m[9];
 
+    m[1] = m[1]*c-m[2]*s;
+    m[5] = m[5]*c-m[6]*s;
+    m[9] = m[9]*c-m[10]*s;
 
-    if(auxY){
-        // Y Axis Rotation
-        angle = 0.1
-        totalRotation.y = 0
-        for(let vertex of vertices) {
-            let dx = vertex.x - cubeCenterX;
-            let dz = vertex.z - cubeCenterZ;
-            let x = dz * Math.sin(angle) + dx * Math.cos(angle);
-            let z = dz * Math.cos(angle) - dx * Math.sin(angle);
-            vertex.x = x + cubeCenterX;
-            vertex.z = z + cubeCenterZ;
-        }
-    }
+    m[2] = m[2]*c+mv1*s;
+    m[6] = m[6]*c+mv5*s;
+    m[10] = m[10]*c+mv9*s;
+}
 
-    if(auxZ){
-        // Z Axis Rotation
-        angle = 0.1
-        totalRotation.z += angle
-        for(let vertex of vertices) {
-            let dx = vertex.x - cubeCenterX;
-            let dy = vertex.y - cubeCenterY;
-            let x = dx * Math.cos(angle) - dy * Math.sin(angle);
-            let y = dx * Math.sin(angle) + dy * Math.cos(angle);
-            vertex.x = x + cubeCenterX;
-            vertex.y = y + cubeCenterY;
-        }
-    }
+function rotateY(m, angle) {
+    var c = Math.cos(angle);
+    var s = Math.sin(angle);
+    var mv0 = m[0], mv4 = m[4], mv8 = m[8];
 
+    m[0] = c*m[0]+s*m[2];
+    m[4] = c*m[4]+s*m[6];
+    m[8] = c*m[8]+s*m[10];
 
-
-    
-    
-
-
-
-    //console.log("x: " + Math.abs(vertices[0].x - leftTopCorner.x))
-    //console.log("y: " + Math.abs(vertices[0].y - leftTopCorner.y))
-
-
-
-
-    
-
-
-
-    for (let edge of edges) {
-        canvasContext.beginPath();
-        canvasContext.moveTo(vertices[edge[0]].x, vertices[edge[0]].y);
-        canvasContext.lineTo(vertices[edge[1]].x, vertices[edge[1]].y);
-        canvasContext.stroke();
-    }
-
-    /*canvasContext.fillStyle = "white"
-
-    canvasContext.beginPath();
-    canvasContext.fillRect(vertices[4].x, vertices[4].y, 10, 10)
-    canvasContext.stroke()
-
-    canvasContext.beginPath();
-    canvasContext.rect(leftTopCorner.x, leftTopCorner.y, 10, 10)
-    canvasContext.stroke()
-
-    canvasContext.beginPath();
-    canvasContext.rect(vertices[5].x, vertices[5].y, 10, 10)
-    canvasContext.stroke()
-
-    canvasContext.beginPath();
-    canvasContext.rect(rightTopCorner.x, rightTopCorner.y, 10, 10)
-    canvasContext.stroke()
-
-    canvasContext.beginPath();
-    canvasContext.rect(vertices[6].x, vertices[6].y, 10, 10)
-    canvasContext.stroke()
-
-    canvasContext.beginPath();
-    canvasContext.rect(rightBottomCorner.x, rightBottomCorner.y, 10, 10)
-    canvasContext.stroke()
-
-        canvasContext.fillStyle = "blue"
-
-
-    canvasContext.beginPath();
-    canvasContext.fillRect(vertices[7].x, vertices[7].y, 10, 10)
-    canvasContext.stroke()
-
-
-    canvasContext.beginPath();
-    canvasContext.rect(leftBottomCorner.x, leftBottomCorner.y, 10, 10)
-    canvasContext.stroke()
-
-    canvasContext.fillStyle = "black"*/
-
-
-
-    requestAnimationFrame(rotatingToFace)
+    m[2] = c*m[2]-s*mv0;
+    m[6] = c*m[6]-s*mv4;
+    m[10] = c*m[10]-s*mv8;
 }
 
 
-// Reset the cube when window is resized
-window.addEventListener("resize", () => {
 
-    canvas.width = document.documentElement.clientWidth * 2;
-    canvas.height = document.documentElement.clientHeight * 2;
+/*================= Drawing ===========================*/
+var time_old = 0;
 
-    canvasContext = canvas.getContext("2d")
+var animate = function(time) {
+    var dt = time-time_old;
+    rotateZ(mov_matrix, dt*0.005);//time
+    rotateY(mov_matrix, dt*0.002);
+    rotateX(mov_matrix, dt*0.003);
+    time_old = time;
 
-    canvasContext.fillStyle = "black"
-    canvasContext.strokeStyle = "white"
-    canvasContext.lineWidth = 1
+    GL.enable(GL.DEPTH_TEST);
+    GL.depthFunc(GL.LEQUAL);
+    GL.clearColor(0.5, 0.5, 0.5, 0.9);
+    GL.clearDepth(1.0);
 
-    cubeCenterX = canvas.width / 2
-    cubeCenterY = canvas.height / 2
-    cubeCenterZ = 0
-    cubeSize = Math.min(canvas.height / 4, canvas.width / 4)
+    GL.viewport(0.0, 0.0, canvas.width, canvas.height);
+    GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
+    GL.uniformMatrix4fv(Pmatrix, false, proj_matrix);
+    GL.uniformMatrix4fv(Vmatrix, false, view_matrix);
+    GL.uniformMatrix4fv(Mmatrix, false, mov_matrix);
+    GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, index_buffer);
+    GL.drawElements(GL.TRIANGLES, indices.length, GL.UNSIGNED_SHORT, 0);
 
-
-    vertices = [
-        new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize), // -1, -1, -1
-        new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ - cubeSize), // 1, -1, -1
-        new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize), // 1, 1, -1
-        new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ - cubeSize), // -1, 1, -1
-        new POINT_3D(cubeCenterX - cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize), // -1, -1, 1
-        new POINT_3D(cubeCenterX + cubeSize, cubeCenterY - cubeSize, cubeCenterZ + cubeSize), // 1, -1, 1
-        new POINT_3D(cubeCenterX + cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize), // 1, 1, 1
-        new POINT_3D(cubeCenterX - cubeSize, cubeCenterY + cubeSize, cubeCenterZ + cubeSize)  // -1, 1, 1
-    ];
-
-
-    let angle = timeSinceResize * 0.001 * SPEED_X * Math.PI * 2
-    for(let vertex of vertices) {
-        let dy = vertex.y - cubeCenterY;
-        let dz = vertex.z - cubeCenterZ;
-        let y = dy * Math.cos(angle) - dz * Math.sin(angle);
-        let z = dy * Math.sin(angle) + dz * Math.cos(angle);
-        vertex.y = y + cubeCenterY;
-        vertex.z = z + cubeCenterZ;
-    }
-
-    // Y Axis Rotation
-    angle = timeSinceResize * 0.001 * SPEED_Y * Math.PI * 2
-    for(let vertex of vertices) {
-        let dx = vertex.x - cubeCenterX;
-        let dz = vertex.z - cubeCenterZ;
-        let x = dz * Math.sin(angle) + dx * Math.cos(angle);
-        let z = dz * Math.cos(angle) - dx * Math.sin(angle);
-        vertex.x = x + cubeCenterX;
-        vertex.z = z + cubeCenterZ;
-    }
-
-    // Z Axis Rotation
-    angle = timeSinceResize * 0.001 * SPEED_Z * Math.PI * 2
-    for(let vertex of vertices) {
-        let dx = vertex.x - cubeCenterX;
-        let dy = vertex.y - cubeCenterY;
-        let x = dx * Math.cos(angle) - dy * Math.sin(angle);
-        let y = dx * Math.sin(angle) + dy * Math.cos(angle);
-        vertex.x = x + cubeCenterX;
-        vertex.y = y + cubeCenterY;
-    }
-    
-})
-
-let lastTouchX = null;
-let lastTouchY = null;
-
-
-function handleMouseMove(event) {
-    if(isIdle){
-        let mouseXSpeed = 0
-        let mouseYSpeed = 0
-
-        if (event.type == "mousemove") {
-            mouseXSpeed = event.movementX;
-            mouseYSpeed = event.movementY;
-        } else if (event.type === "touchmove") {
-            const touch = event.touches[0];
-            if (lastTouchX !== null && lastTouchY !== null) {
-            mouseXSpeed = touch.clientX - lastTouchX;
-            mouseYSpeed = touch.clientY - lastTouchY;
-            }
-            lastTouchX = touch.clientX;
-            lastTouchY = touch.clientY;
-        }
-
-        SPEED_X += mouseYSpeed * 0.005; 
-        SPEED_Y -= mouseXSpeed * 0.005;
-
-        SPEED_X = Math.min(Math.max(SPEED_X, -0.5), 0.5);
-        SPEED_Y = Math.min(Math.max(SPEED_Y, -0.5), 0.5);
-    }
+    window.requestAnimationFrame(animate);
 }
 
-function reduceSpeed() {
-    if (Math.abs(SPEED_X) !== 0.05) {
-        if (SPEED_X > 0){
-            SPEED_X += (0.05 - SPEED_X) * 0.05;
-        } else {
-            SPEED_X -= (0.05 + SPEED_X) * 0.05;
-        }   
-    }
-
-    if (Math.abs(SPEED_Y) !== 0.05) {
-        if (SPEED_Y > 0){
-            SPEED_Y += (0.05 - SPEED_Y) * 0.05;
-        } else {
-            SPEED_Y -= (0.05 + SPEED_Y) * 0.05;
-        }
-    }
-}
-
-function updateSpeed() {
-    reduceSpeed();
-    window.requestAnimationFrame(updateSpeed);
-}
-
-window.addEventListener("mousemove", handleMouseMove);
-window.addEventListener("touchmove", handleMouseMove);
-
-window.addEventListener("mouseout", function() {
-    window.requestAnimationFrame(reduceSpeed);
-});
-
-window.addEventListener("touchend", function() {
-    window.requestAnimationFrame(reduceSpeed);
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-    updateSpeed();
-
-    //requestAnimationFrame(idle)
-    requestAnimationFrame(constructCube)
-    modifyConstructionSpeed(3000);
-});
-
-let homeButton = document.getElementById("button-1")
-let aboutButton = document.getElementById("button-2")
-let currentWorkButton = document.getElementById("button-3")
-let myWorkButton = document.getElementById("button-4")
-let shareButton = document.getElementById("button-5")
-let contactButton = document.getElementById("button-6")
-
-let buttonArray = [homeButton, aboutButton, currentWorkButton, myWorkButton, shareButton, contactButton]
-
-function rotateToFace(event) {
-    isRotatingToFace = event.currentTarget.face
-}
-
-let isRotatingToFace = null;
-
-for(let button of buttonArray){
-    button.face = buttonArray.indexOf(button)
-    button.addEventListener("mouseover", rotateToFace)
-    button.addEventListener("mouseout", () => {
-        isRotatingToFace = null
-    })
-}
+animate(0);
