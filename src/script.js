@@ -1,4 +1,3 @@
-import './style.css'
 import * as THREE from 'three'
 import gsap from 'gsap'
 
@@ -21,9 +20,23 @@ scene.add(mesh)
 
 // Sizes
 const sizes = {
-    width: 800,
-    height: 600
+    width: document.getElementById('main-canvas-container').clientWidth,
+    height: document.getElementById('main-canvas-container').clientHeight
 }
+
+window.addEventListener('resize', () => {
+    // Update sizes
+    sizes.width = document.getElementById('main-canvas-container').clientWidth
+    sizes.height = document.getElementById('main-canvas-container').clientHeight
+
+    // Update camera
+    camera.aspect = sizes.width / sizes.height
+    camera.updateProjectionMatrix()
+
+    // Update renderer
+    renderer.setSize(sizes.width, sizes.height)
+})
+
 
 // Camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
