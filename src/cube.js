@@ -7,11 +7,6 @@ const canvas = document.querySelector('canvas.webgl');
 // Create a new scene
 const scene = new THREE.Scene();
 
-// Add axes helper to the scene
-const axesHelper = new THREE.AxesHelper(2);
-axesHelper.setColors('white', 'green', 'blue');
-scene.add(axesHelper);
-
 // Create a cube and add it to the scene
 const geometry = new THREE.BoxGeometry(1, 1, 1);
 const material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
