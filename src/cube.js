@@ -1,15 +1,18 @@
 import * as THREE from 'three';
 import gsap from 'gsap';
 
-// Select the canvas element
+// Get the canvas element
 const canvas = document.querySelector('canvas.webgl');
 
-// Create a new scene
+// Create the scene
 const scene = new THREE.Scene();
 
 // Create a cube and add it to the scene
 const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
+const material = new THREE.MeshBasicMaterial({
+    color: 0xff0000,
+    wireframe: true
+});
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
@@ -48,10 +51,11 @@ const MIN_ROTATION_SPEED = 0.005;
 const MAX_ROTATION_SPEED = 0.015;
 
 // Minimum mouse movement to consider
-const MIN_MOUSE_MOVE_DISTANCE = 50; // in pixels
+const MIN_MOUSE_MOVE_DISTANCE = 10; // in pixels
 
 // Mouse state variables
 let isMouseOver = false;
+let isMouseOverButton = false; // Track if the mouse is over a button
 let lastMousePosition = new THREE.Vector2();
 let lastTime = performance.now();
 
@@ -61,6 +65,73 @@ let rotationAngle = MIN_ROTATION_SPEED; // Initial rotation angle
 
 // Quaternion for incremental rotation
 let quaternionIncrement = new THREE.Quaternion();
+
+// Flag to indicate if the cube is animating to a face
+let isAnimatingToFace = false;
+
+// Define target quaternions for each face
+const faceQuaternions = [
+    // Face 1: Front
+    new THREE.Quaternion(),
+    // Face 2: Right
+    new THREE.Quaternion().setFromEuler(new THREE.Euler(0, -Math.PI / 2, 0)),
+    // Face 3: Back
+    new THREE.Quaternion().setFromEuler(new THREE.Euler(0, Math.PI, 0)),
+    // Face 4: Left
+    new THREE.Quaternion().setFromEuler(new THREE.Euler(0, Math.PI / 2, 0)),
+    // Face 5: Top
+    new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0)),
+    // Face 6: Bottom
+    new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI / 2, 0, 0)),
+];
+
+// Select the buttons
+const buttons = [];
+for (let i = 1; i <= 6; i++) {
+    buttons.push(document.getElementById(`example-${i}`));
+}
+
+// Add event listeners to the buttons
+buttons.forEach((button, index) => {
+    button.addEventListener('mouseenter', () => {
+        // Update mouse over button state
+        isMouseOverButton = true;
+        // Rotate the cube to show the corresponding face
+        rotateCubeToFace(index);
+    });
+    button.addEventListener('mouseleave', () => {
+        // Update mouse over button state
+        isMouseOverButton = false;
+        // Resume continuous rotation
+        isAnimatingToFace = false;
+    });
+});
+
+function rotateCubeToFace(faceIndex) {
+    isAnimatingToFace = true;
+
+    // Stop any ongoing animation
+    gsap.killTweensOf(mesh.quaternion);
+
+    // Get the target quaternion
+    const targetQuaternion = faceQuaternions[faceIndex];
+
+    // Animate the quaternion
+    gsap.to(mesh.quaternion, {
+        x: targetQuaternion.x,
+        y: targetQuaternion.y,
+        z: targetQuaternion.z,
+        w: targetQuaternion.w,
+        duration: .5,
+        //ease: "power2.inOut",
+        onUpdate: () => {
+            // Keep the quaternion normalized
+            mesh.quaternion.normalize();
+        },
+        onComplete: () => {
+        }
+    });
+}
 
 // Mouse event listeners
 document.addEventListener('mouseenter', (event) => {
@@ -74,7 +145,7 @@ document.addEventListener('mouseleave', () => {
 });
 
 document.addEventListener('mousemove', (event) => {
-    if (isMouseOver) {
+    if (isMouseOver && !isAnimatingToFace && !isMouseOverButton) {
         let currentTime = performance.now();
         let deltaTime = (currentTime - lastTime) / 1000; // Convert to seconds
 
@@ -121,9 +192,11 @@ document.addEventListener('mousemove', (event) => {
 
 // Animation loop
 const tick = () => {
-    // Apply incremental rotation to the cube
-    quaternionIncrement.setFromAxisAngle(rotationAxis, rotationAngle);
-    mesh.quaternion.multiplyQuaternions(quaternionIncrement, mesh.quaternion);
+    // Apply incremental rotation only if not animating to a face and mouse not over a button
+    if (!isAnimatingToFace && !isMouseOverButton) {
+        quaternionIncrement.setFromAxisAngle(rotationAxis, rotationAngle);
+        mesh.quaternion.multiplyQuaternions(quaternionIncrement, mesh.quaternion);
+    }
 
     // Render the scene
     renderer.render(scene, camera);
