@@ -3,6 +3,8 @@ import gsap from 'gsap';
 
 // Get the canvas element
 const canvas = document.querySelector('canvas.webgl');
+const canvasContainer = document.getElementById('main-canvas-container');
+
 
 // Create the scene
 const scene = new THREE.Scene();
@@ -167,6 +169,7 @@ const MIN_MOUSE_MOVE_DISTANCE = 10; // in pixels
 let isMouseOver = false;
 let isMouseOverButton = false; // Track if the mouse is over a button
 let lastMousePosition = new THREE.Vector2();
+let isMovingCloser = false;
 let lastTime = performance.now();
 
 // Rotation variables
@@ -218,28 +221,37 @@ buttons.forEach((button, index) => {
 });
 
 function rotateCubeToFace(faceIndex) {
-    isAnimatingToFace = true;
+    return new Promise((resolve) => {
+        isAnimatingToFace = true;
 
-    // Stop any ongoing animation
-    gsap.killTweensOf(mesh.quaternion);
+        // Stop any ongoing animation
+        gsap.killTweensOf(mesh.quaternion);
 
-    // Get the target quaternion
-    const targetQuaternion = faceQuaternions[faceIndex];
+        // Get the target quaternion
+        const targetQuaternion = faceQuaternions[faceIndex];
 
-    // Animate the quaternion
-    gsap.to(mesh.quaternion, {
-        x: targetQuaternion.x,
-        y: targetQuaternion.y,
-        z: targetQuaternion.z,
-        w: targetQuaternion.w,
-        duration: .5,
-        //ease: "power2.inOut",
-        onUpdate: () => {
-            // Keep the quaternion normalized
-            mesh.quaternion.normalize();
-        },
-        onComplete: () => {
+        // Check if the cube is already at the target quaternion
+        if (mesh.quaternion.equals(targetQuaternion)) {
+            resolve();
+            return;
         }
+
+        // Animate the quaternion
+        gsap.to(mesh.quaternion, {
+            x: targetQuaternion.x,
+            y: targetQuaternion.y,
+            z: targetQuaternion.z,
+            w: targetQuaternion.w,
+            duration: 0.5,
+            ease: "power2.inOut",
+            onUpdate: () => {
+                // Keep the quaternion normalized
+                mesh.quaternion.normalize();
+            },
+            onComplete: () => {
+                resolve();
+            }
+        });
     });
 }
 
@@ -302,20 +314,149 @@ document.addEventListener('mousemove', (event) => {
 
 
 
+// Map content IDs to buttons
+const contentIds = [
+    'content-about-me',   // example-1
+    'content-projects',   // example-2
+    'content-contact',    // example-3
+    'content-blog',       // example-4
+    'content-resume',     // example-5
+    'content-gallery'     // example-6
+];
 
+// Modify the click event listener
+buttons.forEach((button, index) => {
+    button.addEventListener('click', () => {
+        rotateCubeToFace(index).then(() => {
+            hideButtons();
+            moveCubeCloser().then(() => {
+                showContent(contentIds[index]);
+            });
+        });
+    });
+});
 
-// Animation loop
+function hideButtons() {
+    const buttonContainers = document.querySelectorAll('.buttons-container');
+    buttonContainers.forEach((container) => {
+        container.style.display = 'none';
+    });
+}
+
+function showButtons() {
+    const buttonContainers = document.querySelectorAll('.buttons-container');
+    buttonContainers.forEach((container) => {
+        container.style.display = 'flex'; // Or 'block' depending on your layout
+    });
+}
+
+function moveCubeCloser() {
+    return new Promise((resolve) => {
+        isMovingCloser = true;
+
+        // Agregar la clase para hacer que el canvas ocupe toda la pantalla
+        canvas.classList.add('canvas-fullscreen');
+
+        // Actualizar el tamaño del renderer y la cámara
+        sizes.width = window.innerWidth;
+        sizes.height = window.innerHeight;
+        camera.aspect = sizes.width / sizes.height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(sizes.width, sizes.height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // Ajusta la posición objetivo para acercar el cubo a la cámara
+        const targetPositionZ = camera.position.z - 0.1; // Un poco delante de la cámara
+
+        // Animar la posición del cubo hacia la cámara
+        gsap.to(mesh.position, {
+            z: targetPositionZ,
+            duration: 1,
+            ease: "power2.inOut",
+            onComplete: () => {
+                // Ocultar el cubo después de la animación
+                mesh.visible = false;
+
+                // Ocultar el canvas
+                canvas.style.display = 'none';
+                canvasContainer.style.display = 'none';
+
+                isMovingCloser = false;
+                resolve();
+            }
+        });
+
+        // Escalar el cubo para que llene más la vista antes de desaparecer
+        gsap.to(mesh.scale, {
+            x: 2,
+            y: 2,
+            z: 2,
+            duration: 1,
+            ease: "power2.inOut"
+        });
+    });
+}
+
+function showContent(contentId) {
+    // Show the content section
+    const content = document.getElementById(contentId);
+    if (content) {
+        content.style.display = 'block';
+    }
+
+    // Show the Back button
+    const backButton = document.getElementById('back-button');
+    backButton.style.display = 'block';
+}
+
+// Back button functionality
+document.getElementById('back-button').addEventListener('click', () => {
+    // Ocultar las secciones de contenido
+    document.querySelectorAll('.content-section').forEach((content) => {
+        content.style.display = 'none';
+    });
+
+    // Ocultar el botón de regreso
+    const backButton = document.getElementById('back-button');
+    backButton.style.display = 'none';
+
+    // Mostrar el canvas nuevamente
+    canvas.style.display = 'block';
+    canvasContainer.style.display = 'block';
+
+    // Remover la clase de pantalla completa del canvas
+    canvas.classList.remove('canvas-fullscreen');
+
+    // Restablecer el tamaño del renderer y la cámara
+    sizes.width = canvasContainer.clientWidth;
+    sizes.height = canvasContainer.clientHeight;
+    camera.aspect = sizes.width / sizes.height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(sizes.width, sizes.height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Restablecer la visibilidad y posición del cubo
+    mesh.visible = true;
+    mesh.position.set(0, 0, 0);
+    mesh.scale.set(1, 1, 1);
+
+    // Restablecer variables de estado
+    isMovingCloser = false;
+    isAnimatingToFace = false;
+    isMouseOverButton = false;
+
+    // Mostrar los botones
+    showButtons();
+});
+
+// Modify the animation loop
 const tick = () => {
-    // Apply incremental rotation only if not animating to a face and mouse not over a button
-    if (!isAnimatingToFace && !isMouseOverButton) {
+    if (!isAnimatingToFace && !isMouseOverButton && !isMovingCloser) {
         quaternionIncrement.setFromAxisAngle(rotationAxis, rotationAngle);
         mesh.quaternion.multiplyQuaternions(quaternionIncrement, mesh.quaternion);
     }
 
-    // Render the scene
     renderer.render(scene, camera);
-
-    // Request the next animation frame
     window.requestAnimationFrame(tick);
 };
 
