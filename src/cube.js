@@ -7,15 +7,13 @@ const canvas = document.querySelector('canvas.webgl');
 // Create the scene
 const scene = new THREE.Scene();
 
-// Create the loading manager
+// Create the load manager
 const loadingManager = new THREE.LoadingManager();
 
 // Load the cube texture
 const textureLoader = new THREE.TextureLoader(loadingManager);
 const cubeTexture = textureLoader.load('dice_unwrap.png');
 cubeTexture.colorSpace = THREE.SRGBColorSpace
-
-
 
 // Create a cube and add it to the scene
 const geometry = new THREE.BoxGeometry(1, 1, 1);
