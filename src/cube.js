@@ -244,17 +244,17 @@ function rotateCubeToFace(faceIndex) {
 }
 
 // Mouse event listeners
-canvas.addEventListener('mouseenter', (event) => {
+document.addEventListener('mouseenter', (event) => {
     isMouseOver = true;
     lastMousePosition.set(event.clientX, event.clientY);
     lastTime = performance.now();
 });
 
-canvas.addEventListener('mouseleave', () => {
+document.addEventListener('mouseleave', () => {
     isMouseOver = false;
 });
 
-canvas.addEventListener('mousemove', (event) => {
+document.addEventListener('mousemove', (event) => {
     if (isMouseOver && !isAnimatingToFace && !isMouseOverButton) {
         let currentTime = performance.now();
         let deltaTime = (currentTime - lastTime) / 1000; // Convert to seconds
