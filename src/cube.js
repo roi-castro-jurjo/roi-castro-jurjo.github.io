@@ -7,12 +7,119 @@ const canvas = document.querySelector('canvas.webgl');
 // Create the scene
 const scene = new THREE.Scene();
 
+// Load the cube texture
+const textureLoader = new THREE.TextureLoader();
+const cubeTexture = textureLoader.load('dice_unwrap.png');
+cubeTexture.colorSpace = THREE.SRGBColorSpace
+
+
+
 // Create a cube and add it to the scene
 const geometry = new THREE.BoxGeometry(1, 1, 1);
+
+// Define the vertices of the cube (24 vertices for 6 faces)
+const vertices = new Float32Array([
+    // Front face (+Z)
+    -0.5, -0.5,  0.5, // v0
+     0.5, -0.5,  0.5, // v1
+     0.5,  0.5,  0.5, // v2
+    -0.5,  0.5,  0.5, // v3
+    // Back face (-Z)
+     0.5, -0.5, -0.5, // v4
+    -0.5, -0.5, -0.5, // v5
+    -0.5,  0.5, -0.5, // v6
+     0.5,  0.5, -0.5, // v7
+    // Top face (+Y)
+    -0.5,  0.5,  0.5, // v8
+     0.5,  0.5,  0.5, // v9
+     0.5,  0.5, -0.5, // v10
+    -0.5,  0.5, -0.5, // v11
+    // Bottom face (-Y)
+    -0.5, -0.5, -0.5, // v12
+     0.5, -0.5, -0.5, // v13
+     0.5, -0.5,  0.5, // v14
+    -0.5, -0.5,  0.5, // v15
+    // Right face (+X)
+     0.5, -0.5,  0.5, // v16
+     0.5, -0.5, -0.5, // v17
+     0.5,  0.5, -0.5, // v18
+     0.5,  0.5,  0.5, // v19
+    // Left face (-X)
+    -0.5, -0.5, -0.5, // v20
+    -0.5, -0.5,  0.5, // v21
+    -0.5,  0.5,  0.5, // v22
+    -0.5,  0.5, -0.5  // v23
+]);
+
+// Define the indices for the cube faces (12 triangles)
+const indices = [
+    // Front face
+    0,  1,  2,   2,  3,  0,
+    // Back face
+    4,  5,  6,   6,  7,  4,
+    // Top face
+    8,  9, 10,  10, 11,  8,
+    // Bottom face
+   12, 13, 14,  14, 15, 12,
+    // Right face
+   16, 17, 18,  18, 19, 16,
+    // Left face
+   20, 21, 22,  22, 23, 20
+];
+
+// Define the UV coordinates for each vertex
+// Assuming a 4x3 grid texture layout
+const tileUvWidth = 1 / 4;
+const tileUvHeight = 1 / 3;
+
+function flipV(v) {
+    return 1 - v;
+}
+
+const uvs = new Float32Array([
+    // Front face (+Z) - Tile (1, 1)
+    tileUvWidth * 1, flipV(tileUvHeight * 2), // v0
+    tileUvWidth * 2, flipV(tileUvHeight * 2), // v1
+    tileUvWidth * 2, flipV(tileUvHeight * 1), // v2
+    tileUvWidth * 1, flipV(tileUvHeight * 1), // v3
+    // Back face (-Z) - Tile (3, 1)
+    tileUvWidth * 3, flipV(tileUvHeight * 2), // v4
+    tileUvWidth * 4, flipV(tileUvHeight * 2), // v5
+    tileUvWidth * 4, flipV(tileUvHeight * 1), // v6
+    tileUvWidth * 3, flipV(tileUvHeight * 1), // v7
+    // Top face (+Y) - Tile (1, 0)
+    tileUvWidth * 1, flipV(tileUvHeight * 3), // v8
+    tileUvWidth * 2, flipV(tileUvHeight * 3), // v9
+    tileUvWidth * 2, flipV(tileUvHeight * 2), // v10
+    tileUvWidth * 1, flipV(tileUvHeight * 2), // v11
+    // Bottom face (-Y) - Tile (1, 2)
+    tileUvWidth * 1, flipV(tileUvHeight * 1), // v12
+    tileUvWidth * 2, flipV(tileUvHeight * 1), // v13
+    tileUvWidth * 2, flipV(tileUvHeight * 0), // v14
+    tileUvWidth * 1, flipV(tileUvHeight * 0), // v15
+    // Right face (+X) - Tile (2, 1)
+    tileUvWidth * 2, flipV(tileUvHeight * 2), // v16
+    tileUvWidth * 3, flipV(tileUvHeight * 2), // v17
+    tileUvWidth * 3, flipV(tileUvHeight * 1), // v18
+    tileUvWidth * 2, flipV(tileUvHeight * 1), // v19
+    // Left face (-X) - Tile (0, 1)
+    tileUvWidth * 0, flipV(tileUvHeight * 2), // v20
+    tileUvWidth * 1, flipV(tileUvHeight * 2), // v21
+    tileUvWidth * 1, flipV(tileUvHeight * 1), // v22
+    tileUvWidth * 0, flipV(tileUvHeight * 1)  // v23
+]);
+
+// Build the geometry
+geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+geometry.setIndex(indices);
+geometry.computeVertexNormals();
+
+// Create the material using the loaded texture
 const material = new THREE.MeshBasicMaterial({
-    color: 0xff0000,
-    wireframe: true
+    map: cubeTexture,
 });
+
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
@@ -21,6 +128,18 @@ const sizes = {
     width: document.getElementById('main-canvas-container').clientWidth,
     height: document.getElementById('main-canvas-container').clientHeight
 };
+
+// Set up the camera
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
+camera.position.z = 3;
+scene.add(camera);
+
+// Set up the renderer
+const renderer = new THREE.WebGLRenderer({
+    canvas: canvas
+});
+renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 // Update sizes on window resize
 window.addEventListener('resize', () => {
@@ -33,18 +152,8 @@ window.addEventListener('resize', () => {
 
     // Update renderer size
     renderer.setSize(sizes.width, sizes.height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
-
-// Set up the camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
-camera.position.z = 3;
-scene.add(camera);
-
-// Set up the renderer
-const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
-});
-renderer.setSize(sizes.width, sizes.height);
 
 // Define minimum and maximum rotation speeds
 const MIN_ROTATION_SPEED = 0.005;
@@ -134,17 +243,17 @@ function rotateCubeToFace(faceIndex) {
 }
 
 // Mouse event listeners
-document.addEventListener('mouseenter', (event) => {
+canvas.addEventListener('mouseenter', (event) => {
     isMouseOver = true;
     lastMousePosition.set(event.clientX, event.clientY);
     lastTime = performance.now();
 });
 
-document.addEventListener('mouseleave', () => {
+canvas.addEventListener('mouseleave', () => {
     isMouseOver = false;
 });
 
-document.addEventListener('mousemove', (event) => {
+canvas.addEventListener('mousemove', (event) => {
     if (isMouseOver && !isAnimatingToFace && !isMouseOverButton) {
         let currentTime = performance.now();
         let deltaTime = (currentTime - lastTime) / 1000; // Convert to seconds
@@ -172,7 +281,7 @@ document.addEventListener('mousemove', (event) => {
             }
 
             // Map mouse speed to rotation angle within defined limits
-            let maxMouseSpeed = 1000;
+            let maxMouseSpeed = 10000;
             rotationAngle = THREE.MathUtils.clamp(
                 (mouseSpeed / maxMouseSpeed) * (MAX_ROTATION_SPEED - MIN_ROTATION_SPEED) + MIN_ROTATION_SPEED,
                 MIN_ROTATION_SPEED,
@@ -189,6 +298,10 @@ document.addEventListener('mousemove', (event) => {
         }
     }
 });
+
+
+
+
 
 // Animation loop
 const tick = () => {
