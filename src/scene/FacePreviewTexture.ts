@@ -1,24 +1,27 @@
 import * as THREE from 'three'
 import { translate } from '../i18n'
 import type { SectionDefinition } from '../data/sections'
-
-const PREVIEW_CANVAS_SIZE = 1024
-const CANVAS_MARGIN = 96
-const CORNER_TICK_LENGTH = 48
-const TITLE_FONT_SIZE = 58
-const BODY_FONT_SIZE = 40
-const BODY_LINE_HEIGHT = 58
-const INK_COLOR = '#ffd9a0'
-const FRAME_COLOR = 'rgba(255, 176, 0, 0.65)'
-const MONOSPACE_STACK = "'Share Tech Mono', 'Cascadia Mono', Consolas, monospace"
+import {
+  TERMINAL_AMBER_INK,
+  TERMINAL_FRAME_LINE,
+  TERMINAL_MONOSPACE_STACK,
+} from '../theme/terminalTheme'
+import {
+  PREVIEW_CANVAS_SIZE,
+  PREVIEW_CANVAS_MARGIN,
+  PREVIEW_CORNER_TICK_LENGTH,
+  PREVIEW_TITLE_FONT_SIZE,
+  PREVIEW_BODY_FONT_SIZE,
+  PREVIEW_BODY_LINE_HEIGHT,
+} from './facePreviewConfig'
 
 function drawAngularFrame(
   drawingContext: CanvasRenderingContext2D,
   canvasSize: number,
 ): void {
-  const near = CANVAS_MARGIN
-  const far = canvasSize - CANVAS_MARGIN
-  drawingContext.strokeStyle = FRAME_COLOR
+  const near = PREVIEW_CANVAS_MARGIN
+  const far = canvasSize - PREVIEW_CANVAS_MARGIN
+  drawingContext.strokeStyle = TERMINAL_FRAME_LINE
   drawingContext.lineWidth = 3
 
   const corners: ReadonlyArray<[number, number, number, number]> = [
@@ -29,9 +32,9 @@ function drawAngularFrame(
   ]
   for (const [cornerX, cornerY, horizontalSign, verticalSign] of corners) {
     drawingContext.beginPath()
-    drawingContext.moveTo(cornerX + horizontalSign * CORNER_TICK_LENGTH, cornerY)
+    drawingContext.moveTo(cornerX + horizontalSign * PREVIEW_CORNER_TICK_LENGTH, cornerY)
     drawingContext.lineTo(cornerX, cornerY)
-    drawingContext.lineTo(cornerX, cornerY + verticalSign * CORNER_TICK_LENGTH)
+    drawingContext.lineTo(cornerX, cornerY + verticalSign * PREVIEW_CORNER_TICK_LENGTH)
     drawingContext.stroke()
   }
 }
@@ -70,26 +73,26 @@ export function createFacePreviewTexture(
   drawingContext.clearRect(0, 0, PREVIEW_CANVAS_SIZE, PREVIEW_CANVAS_SIZE)
   drawAngularFrame(drawingContext, PREVIEW_CANVAS_SIZE)
 
-  drawingContext.fillStyle = INK_COLOR
+  drawingContext.fillStyle = TERMINAL_AMBER_INK
   drawingContext.textBaseline = 'top'
 
-  const contentLeft = CANVAS_MARGIN + CORNER_TICK_LENGTH
-  const contentRight = PREVIEW_CANVAS_SIZE - CANVAS_MARGIN - CORNER_TICK_LENGTH
+  const contentLeft = PREVIEW_CANVAS_MARGIN + PREVIEW_CORNER_TICK_LENGTH
+  const contentRight = PREVIEW_CANVAS_SIZE - PREVIEW_CANVAS_MARGIN - PREVIEW_CORNER_TICK_LENGTH
   const contentWidth = contentRight - contentLeft
-  let cursorY = CANVAS_MARGIN + CORNER_TICK_LENGTH
+  let cursorY = PREVIEW_CANVAS_MARGIN + PREVIEW_CORNER_TICK_LENGTH
 
-  drawingContext.font = `${TITLE_FONT_SIZE}px ${MONOSPACE_STACK}`
+  drawingContext.font = `${PREVIEW_TITLE_FONT_SIZE}px ${TERMINAL_MONOSPACE_STACK}`
   for (const titleLine of wrapTextIntoLines(
     drawingContext,
     translate(section.labelTranslationKey),
     contentWidth,
   )) {
     drawingContext.fillText(titleLine, contentLeft, cursorY)
-    cursorY += TITLE_FONT_SIZE + 12
+    cursorY += PREVIEW_TITLE_FONT_SIZE + 12
   }
 
   cursorY += 24
-  drawingContext.strokeStyle = FRAME_COLOR
+  drawingContext.strokeStyle = TERMINAL_FRAME_LINE
   drawingContext.lineWidth = 2
   drawingContext.beginPath()
   drawingContext.moveTo(contentLeft, cursorY)
@@ -97,14 +100,14 @@ export function createFacePreviewTexture(
   drawingContext.stroke()
   cursorY += 48
 
-  drawingContext.font = `${BODY_FONT_SIZE}px ${MONOSPACE_STACK}`
+  drawingContext.font = `${PREVIEW_BODY_FONT_SIZE}px ${TERMINAL_MONOSPACE_STACK}`
   for (const bodyLine of wrapTextIntoLines(
     drawingContext,
     translate(section.previewTranslationKey),
     contentWidth,
   )) {
     drawingContext.fillText(bodyLine, contentLeft, cursorY)
-    cursorY += BODY_LINE_HEIGHT
+    cursorY += PREVIEW_BODY_LINE_HEIGHT
   }
 
   const previewTexture = new THREE.CanvasTexture(canvas)

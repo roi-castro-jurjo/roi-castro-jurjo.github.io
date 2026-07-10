@@ -1,21 +1,24 @@
 import * as THREE from 'three'
 import { gsap } from 'gsap'
 import { BOX_GEOMETRY_FACE_INDEX } from '../data/sections'
-
-const CUBE_EDGE_LENGTH = 2
-const CUBE_FACE_COUNT = 6
-const HOLOGRAM_AMBER_COLOR = '#ffb000'
-const EDGE_GLOW_OPACITY = 0.9
-
-const IDLE_SPIN_RADIANS_PER_SECOND = 0.25
-const IDLE_TILT_AMPLITUDE_RADIANS = 0.15
-const IDLE_TILT_FREQUENCY = 0.21
-const IDLE_FLOAT_AMPLITUDE = 0.06
-const IDLE_FLOAT_FREQUENCY = 0.8
-const REDUCED_MOTION_SPEED_MULTIPLIER = 0.05
-
-const FOCUS_TWEEN_DURATION_SECONDS = 0.6
-const FOCUS_TWEEN_EASE = 'power2.out'
+import { TERMINAL_AMBER } from '../theme/terminalTheme'
+import {
+  HOLOGRAPHIC_FACE_VERTEX_SHADER,
+  HOLOGRAPHIC_FACE_FRAGMENT_SHADER,
+} from './shaders/holographicFaceShaders'
+import {
+  CUBE_EDGE_LENGTH,
+  CUBE_FACE_COUNT,
+  EDGE_GLOW_OPACITY,
+  IDLE_SPIN_RADIANS_PER_SECOND,
+  IDLE_TILT_AMPLITUDE_RADIANS,
+  IDLE_TILT_FREQUENCY,
+  IDLE_FLOAT_AMPLITUDE,
+  IDLE_FLOAT_FREQUENCY,
+  REDUCED_MOTION_SPEED_MULTIPLIER,
+  FOCUS_TWEEN_DURATION_SECONDS,
+  FOCUS_TWEEN_EASE,
+} from './holographicCubeConfig'
 
 const QUARTER_TURN = Math.PI / 2
 const HALF_TURN = Math.PI
@@ -40,52 +43,6 @@ const FACE_TARGET_ORIENTATION_BY_INDEX: ReadonlyMap<number, THREE.Quaternion> =
     [BOX_GEOMETRY_FACE_INDEX.negativeZ, orientationFromEuler(0, HALF_TURN, 0)],
   ])
 
-const HOLOGRAM_VERTEX_SHADER = `
-  varying vec3 vSurfaceNormal;
-  varying vec3 vWorldPosition;
-  varying vec2 vUv;
-
-  void main() {
-    vSurfaceNormal = normalize(normalMatrix * normal);
-    vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-    vWorldPosition = worldPosition.xyz;
-    vUv = uv;
-    gl_Position = projectionMatrix * viewMatrix * worldPosition;
-  }
-`
-
-const HOLOGRAM_FRAGMENT_SHADER = `
-  uniform float uElapsedTimeInSeconds;
-  uniform vec3 uHologramColor;
-  uniform sampler2D uPreviewMap;
-  uniform float uPreviewOpacity;
-  varying vec3 vSurfaceNormal;
-  varying vec3 vWorldPosition;
-  varying vec2 vUv;
-
-  void main() {
-    vec3 directionToCamera = normalize(cameraPosition - vWorldPosition);
-    float grazingAngleFactor = 1.0 - abs(dot(directionToCamera, normalize(vSurfaceNormal)));
-    float rimGlowIntensity = pow(grazingAngleFactor, 2.0);
-
-    float scanlineWave = 0.5 + 0.5 * sin(vWorldPosition.y * 40.0 - uElapsedTimeInSeconds * 3.0);
-    float scanlineBrightness = mix(0.75, 1.0, scanlineWave);
-
-    float projectorFlickerFactor =
-      0.92 + 0.08 * sin(uElapsedTimeInSeconds * 23.0) * sin(uElapsedTimeInSeconds * 7.3);
-
-    float baseOpacity =
-      (0.12 + rimGlowIntensity * 0.85) * scanlineBrightness * projectorFlickerFactor;
-
-    float previewInk = texture2D(uPreviewMap, vUv).a * uPreviewOpacity;
-    vec3 finalColor = uHologramColor * (1.0 + previewInk * 0.9);
-    float finalAlpha =
-      clamp(baseOpacity + previewInk * (0.65 + 0.35 * scanlineBrightness), 0.0, 1.0);
-
-    gl_FragColor = vec4(finalColor, finalAlpha);
-  }
-`
-
 function createTransparentFallbackTexture(): THREE.DataTexture {
   const transparentPixel = new Uint8Array([0, 0, 0, 0])
   const fallbackTexture = new THREE.DataTexture(transparentPixel, 1, 1)
@@ -97,7 +54,7 @@ export class HolographicCube {
   readonly object = new THREE.Group()
 
   private readonly sharedTimeUniform = { value: 0 }
-  private readonly sharedColorUniform = { value: new THREE.Color(HOLOGRAM_AMBER_COLOR) }
+  private readonly sharedColorUniform = { value: new THREE.Color(TERMINAL_AMBER) }
   private readonly fallbackPreviewTexture = createTransparentFallbackTexture()
   private readonly faceMaterials: THREE.ShaderMaterial[] = []
 
@@ -133,7 +90,7 @@ export class HolographicCube {
 
     this.edgesGeometry = new THREE.EdgesGeometry(this.cubeGeometry)
     this.edgesMaterial = new THREE.LineBasicMaterial({
-      color: HOLOGRAM_AMBER_COLOR,
+      color: TERMINAL_AMBER,
       transparent: true,
       opacity: EDGE_GLOW_OPACITY,
       blending: THREE.AdditiveBlending,
@@ -247,8 +204,8 @@ export class HolographicCube {
         uPreviewMap: { value: this.fallbackPreviewTexture },
         uPreviewOpacity: { value: 0 },
       },
-      vertexShader: HOLOGRAM_VERTEX_SHADER,
-      fragmentShader: HOLOGRAM_FRAGMENT_SHADER,
+      vertexShader: HOLOGRAPHIC_FACE_VERTEX_SHADER,
+      fragmentShader: HOLOGRAPHIC_FACE_FRAGMENT_SHADER,
       transparent: true,
       blending: THREE.AdditiveBlending,
       depthWrite: false,

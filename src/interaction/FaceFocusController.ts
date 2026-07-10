@@ -5,9 +5,10 @@ import { createFacePreviewTexture } from '../scene/FacePreviewTexture'
 import { SECTIONS } from '../data/sections'
 import { onLocaleChange } from '../i18n'
 import { setApplicationState } from '../core/state'
-
-const PREVIEW_FADE_DURATION_SECONDS = 0.45
-const PREVIEW_FADE_EASE = 'power2.out'
+import {
+  PREVIEW_FADE_DURATION_SECONDS,
+  PREVIEW_FADE_EASE,
+} from '../scene/facePreviewConfig'
 
 export class FaceFocusController {
   private readonly previewTextureByFaceIndex = new Map<number, CanvasTexture>()
