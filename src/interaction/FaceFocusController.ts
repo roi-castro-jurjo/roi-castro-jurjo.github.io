@@ -4,7 +4,7 @@ import type { HolographicCube } from '../scene/HolographicCube'
 import { createFacePreviewTexture } from '../scene/FacePreviewTexture'
 import { SECTIONS } from '../data/sections'
 import { onLocaleChange } from '../i18n'
-import { setApplicationState } from '../core/state'
+import { getApplicationState, setApplicationState } from '../core/state'
 import {
   PREVIEW_FADE_DURATION_SECONDS,
   PREVIEW_FADE_EASE,
@@ -30,6 +30,7 @@ export class FaceFocusController {
   }
 
   engageFace(cubeFaceIndex: number): void {
+    if (getApplicationState() === 'dataslate') return
     if (!this.engagedFaceIndices.includes(cubeFaceIndex)) {
       this.engagedFaceIndices.push(cubeFaceIndex)
     }
@@ -37,9 +38,19 @@ export class FaceFocusController {
   }
 
   disengageFace(cubeFaceIndex: number): void {
+    if (getApplicationState() === 'dataslate') return
     const position = this.engagedFaceIndices.indexOf(cubeFaceIndex)
     if (position !== -1) this.engagedFaceIndices.splice(position, 1)
     this.applyEngagement()
+  }
+
+  releaseAllFaces(): void {
+    this.engagedFaceIndices.length = 0
+    if (this.activePreviewFaceIndex !== null) {
+      this.animatePreviewOpacity(this.activePreviewFaceIndex, 0)
+      this.activePreviewFaceIndex = null
+    }
+    this.cube.releaseFocus()
   }
 
   dispose(): void {

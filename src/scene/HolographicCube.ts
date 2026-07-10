@@ -18,6 +18,9 @@ import {
   REDUCED_MOTION_SPEED_MULTIPLIER,
   FOCUS_TWEEN_DURATION_SECONDS,
   FOCUS_TWEEN_EASE,
+  DATASLATE_ZOOM_SCALE,
+  DATASLATE_TWEEN_DURATION_SECONDS,
+  DATASLATE_TWEEN_EASE,
 } from './holographicCubeConfig'
 
 const QUARTER_TURN = Math.PI / 2
@@ -69,6 +72,7 @@ export class HolographicCube {
   private readonly faceSwitchToOrientation = new THREE.Quaternion()
   private readonly focusState = { blend: 0 }
   private readonly faceSwitchState = { progress: 1 }
+  private readonly dataslateState = { zoom: 0 }
   private idleYaw = 0
 
   private readonly prefersReducedMotion = window.matchMedia(
@@ -126,6 +130,10 @@ export class HolographicCube {
       IDLE_FLOAT_AMPLITUDE *
       speedMultiplier *
       (1 - this.focusState.blend)
+
+    this.object.scale.setScalar(
+      1 + this.dataslateState.zoom * (DATASLATE_ZOOM_SCALE - 1),
+    )
   }
 
   focusOnFace(cubeFaceIndex: number): void {
@@ -162,6 +170,15 @@ export class HolographicCube {
     this.animateFocusBlend(0)
   }
 
+  expandToDataslate(cubeFaceIndex: number): void {
+    this.focusOnFace(cubeFaceIndex)
+    this.animateDataslateZoom(1)
+  }
+
+  collapseFromDataslate(): void {
+    this.animateDataslateZoom(0)
+  }
+
   setPreviewTexture(cubeFaceIndex: number, previewTexture: THREE.Texture): void {
     const faceMaterial = this.getFaceMaterial(cubeFaceIndex)
     if (faceMaterial) faceMaterial.uniforms['uPreviewMap']!.value = previewTexture
@@ -175,11 +192,26 @@ export class HolographicCube {
   dispose(): void {
     gsap.killTweensOf(this.focusState)
     gsap.killTweensOf(this.faceSwitchState)
+    gsap.killTweensOf(this.dataslateState)
     this.cubeGeometry.dispose()
     this.edgesGeometry.dispose()
     this.edgesMaterial.dispose()
     this.faceMaterials.forEach((faceMaterial) => faceMaterial.dispose())
     this.fallbackPreviewTexture.dispose()
+  }
+
+  private animateDataslateZoom(targetZoom: number): void {
+    if (this.prefersReducedMotion) {
+      gsap.killTweensOf(this.dataslateState)
+      this.dataslateState.zoom = targetZoom
+      return
+    }
+    gsap.to(this.dataslateState, {
+      zoom: targetZoom,
+      duration: DATASLATE_TWEEN_DURATION_SECONDS,
+      ease: DATASLATE_TWEEN_EASE,
+      overwrite: true,
+    })
   }
 
   private animateFocusBlend(targetBlend: number): void {

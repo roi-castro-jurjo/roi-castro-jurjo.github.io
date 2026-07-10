@@ -179,6 +179,143 @@ body {
   text-shadow: 0 0 6px color-mix(in srgb, var(--color-amber) 70%, transparent);
 }
 
+.dataslate {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  display: flex;
+  padding: clamp(1.25rem, 3vw, 2.75rem);
+  background-color: #0a0704;
+  background-image:
+    radial-gradient(
+      ellipse 120% 90% at 50% 42%,
+      color-mix(in srgb, var(--color-amber) 11%, transparent),
+      transparent 72%
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-amber) 5%, transparent) 0 1px,
+      transparent 1px 3px
+    );
+  opacity: 0;
+  transform: scale(0.5);
+  transform-origin: center;
+  transition:
+    transform 0.55s cubic-bezier(0.65, 0, 0.35, 1),
+    opacity 0.55s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.dataslate::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 55%,
+    color-mix(in srgb, var(--color-amber) 8%, transparent) 100%
+  );
+  animation: dataslate-glow 4.5s ease-in-out infinite;
+}
+
+.dataslate[hidden] {
+  display: none;
+}
+
+.dataslate--open {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.dataslate__frame {
+  --corner-tick: clamp(28px, 4vw, 52px);
+  --corner-line: color-mix(in srgb, var(--color-amber) 70%, transparent);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: clamp(1.5rem, 3.5vw, 3rem);
+  border: 1px solid color-mix(in srgb, var(--color-amber) 22%, transparent);
+  background-image:
+    linear-gradient(var(--corner-line), var(--corner-line)),
+    linear-gradient(var(--corner-line), var(--corner-line)),
+    linear-gradient(var(--corner-line), var(--corner-line)),
+    linear-gradient(var(--corner-line), var(--corner-line)),
+    linear-gradient(var(--corner-line), var(--corner-line)),
+    linear-gradient(var(--corner-line), var(--corner-line)),
+    linear-gradient(var(--corner-line), var(--corner-line)),
+    linear-gradient(var(--corner-line), var(--corner-line));
+  background-repeat: no-repeat;
+  background-size:
+    var(--corner-tick) 2px, 2px var(--corner-tick),
+    var(--corner-tick) 2px, 2px var(--corner-tick),
+    var(--corner-tick) 2px, 2px var(--corner-tick),
+    var(--corner-tick) 2px, 2px var(--corner-tick);
+  background-position:
+    left top, left top,
+    right top, right top,
+    left bottom, left bottom,
+    right bottom, right bottom;
+}
+
+.dataslate__bar {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-amber) 40%, transparent);
+}
+
+.dataslate__title {
+  margin: 0;
+  flex: 1;
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-amber-bright);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--color-amber) 55%, transparent);
+}
+
+.dataslate__close {
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  font: inherit;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--color-amber);
+  background: color-mix(in srgb, var(--color-amber) 4%, transparent);
+  border: 1px solid var(--color-amber-dim);
+  cursor: pointer;
+  clip-path: polygon(
+    8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px
+  );
+  transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s, color 0.15s;
+}
+
+.dataslate__close:hover,
+.dataslate__close:focus-visible {
+  border-color: var(--color-amber);
+  color: var(--color-amber-bright);
+  background: color-mix(in srgb, var(--color-amber) 12%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--color-amber) 40%, transparent);
+}
+
+.dataslate__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  max-width: 70ch;
+  font-size: clamp(0.9rem, 1.6vw, 1.05rem);
+  line-height: 1.8;
+  color: var(--color-amber);
+}
+
+.dataslate__body p {
+  margin: 0 0 1.25rem;
+}
+
 @keyframes cursor-blink {
   0%, 60% { opacity: 1; }
   61%, 100% { opacity: 0; }
@@ -190,6 +327,11 @@ body {
   50% { opacity: 0.9; }
   75% { opacity: 0.55; }
   100% { opacity: 1; }
+}
+
+@keyframes dataslate-glow {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
 
 @media (max-width: 900px) {

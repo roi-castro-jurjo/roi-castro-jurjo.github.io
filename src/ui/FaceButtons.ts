@@ -6,6 +6,7 @@ const BUTTONS_PER_COLUMN = 3
 export interface FaceButtonInteractionHandlers {
   onFocusFace(cubeFaceIndex: number): void
   onReleaseFace(cubeFaceIndex: number): void
+  onActivateFace(cubeFaceIndex: number): void
 }
 
 function createSectionButton(
@@ -25,6 +26,7 @@ function createSectionButton(
     sectionButton.addEventListener('focus', () => handlers.onFocusFace(cubeFaceIndex))
     sectionButton.addEventListener('mouseleave', () => handlers.onReleaseFace(cubeFaceIndex))
     sectionButton.addEventListener('blur', () => handlers.onReleaseFace(cubeFaceIndex))
+    sectionButton.addEventListener('click', () => handlers.onActivateFace(cubeFaceIndex))
   }
 
   return sectionButton

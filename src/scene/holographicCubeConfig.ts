@@ -11,3 +11,7 @@ export const REDUCED_MOTION_SPEED_MULTIPLIER = 0.05
 
 export const FOCUS_TWEEN_DURATION_SECONDS = 0.6
 export const FOCUS_TWEEN_EASE = 'power2.out'
+
+export const DATASLATE_ZOOM_SCALE = 3
+export const DATASLATE_TWEEN_DURATION_SECONDS = 0.55
+export const DATASLATE_TWEEN_EASE = 'power2.inOut'
