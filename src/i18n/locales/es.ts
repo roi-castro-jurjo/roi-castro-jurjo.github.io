@@ -48,6 +48,9 @@ export const spanishLocale: LocaleDefinition = {
     'section.vox.body':
       '[TRANSCRIPCIÓN PENDIENTE] Frecuencias de vox pendientes de consagración. REF: VOX/M42.',
 
+    'boot.skipHint': 'PULSA CUALQUIER TECLA PARA OMITIR EL RITO',
+    'boot.progressLabel': 'PROGRESO DEL RITO DE ACTIVACIÓN',
+
     'boot.core.01': 'Iniciando protocolo de sesión…',
     'boot.core.02': 'Despertando espíritu de la máquina… responde.',
     'boot.core.03': 'Recitando Letanía de Ignición… aceptada.',

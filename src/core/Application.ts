@@ -26,8 +26,7 @@ export class Application {
 
   async start(): Promise<void> {
     setApplicationState('boot')
-    await runBootSequence()
-    setApplicationState('idle')
+    const bootSequencePromise = runBootSequence(document.getElementById('boot-screen')!)
 
     renderLanguageSelector(document.getElementById('language-slot')!)
 
@@ -53,6 +52,10 @@ export class Application {
         onActivateFace: (cubeFaceIndex) => this.openDataslate(cubeFaceIndex),
       },
     )
+
+    await bootSequencePromise
+    this.holographicCube?.powerOn()
+    setApplicationState('idle')
   }
 
   dispose(): void {

@@ -48,6 +48,9 @@ export const englishLocale: LocaleDefinition = {
     'section.vox.body':
       '[TRANSCRIPTION PENDING] Vox frequencies awaiting consecration. REF: VOX/M42.',
 
+    'boot.skipHint': 'PRESS ANY KEY TO SKIP THE RITE',
+    'boot.progressLabel': 'ACTIVATION RITE PROGRESS',
+
     'boot.core.01': 'Initialising session protocol…',
     'boot.core.02': 'Awakening machine spirit… respond.',
     'boot.core.03': 'Reciting Litany of Ignition… accepted.',

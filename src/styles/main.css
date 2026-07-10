@@ -179,6 +179,88 @@ body {
   text-shadow: 0 0 6px color-mix(in srgb, var(--color-amber) 70%, transparent);
 }
 
+#boot-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.75rem;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  background-color: var(--color-background);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-amber) 4%, transparent) 0 1px,
+    transparent 1px 3px
+  );
+  transition: opacity 0.4s ease-out;
+}
+
+#boot-screen[hidden] {
+  display: none;
+}
+
+.boot-screen--done {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.boot-screen__terminal {
+  width: min(72ch, 100%);
+  height: min(50vh, 22rem);
+  overflow: hidden;
+}
+
+.boot-screen__lines {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: clamp(0.8rem, 1.6vw, 0.95rem);
+  line-height: 1.9;
+  letter-spacing: 0.05em;
+  color: var(--color-amber);
+  text-shadow: 0 0 6px color-mix(in srgb, var(--color-amber) 45%, transparent);
+}
+
+.boot-screen__lines li::before {
+  content: '> ';
+  color: var(--color-amber-dim);
+}
+
+.boot-screen__lines li:last-child::after {
+  content: '▌';
+  margin-left: 2px;
+  animation: cursor-blink 1.1s steps(1) infinite;
+}
+
+.boot-screen__progress {
+  width: min(72ch, 100%);
+  height: 16px;
+  padding: 3px;
+  border: 1px solid var(--color-amber-dim);
+  clip-path: polygon(
+    6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px
+  );
+}
+
+.boot-screen__progress-fill {
+  height: 100%;
+  background: var(--color-amber);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--color-amber) 60%, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.12s linear;
+}
+
+.boot-screen__skip {
+  margin: 0;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--color-amber-dim);
+}
+
 .dataslate {
   position: fixed;
   inset: 0;

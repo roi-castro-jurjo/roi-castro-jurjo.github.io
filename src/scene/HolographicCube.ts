@@ -18,6 +18,9 @@ import {
   REDUCED_MOTION_SPEED_MULTIPLIER,
   FOCUS_TWEEN_DURATION_SECONDS,
   FOCUS_TWEEN_EASE,
+  POWER_ON_RISE_DISTANCE,
+  POWER_ON_TWEEN_DURATION_SECONDS,
+  POWER_ON_TWEEN_EASE,
   DATASLATE_ZOOM_SCALE,
   DATASLATE_TWEEN_DURATION_SECONDS,
   DATASLATE_TWEEN_EASE,
@@ -73,6 +76,7 @@ export class HolographicCube {
   private readonly focusState = { blend: 0 }
   private readonly faceSwitchState = { progress: 1 }
   private readonly dataslateState = { zoom: 0 }
+  private readonly powerOnState = { progress: 0 }
   private idleYaw = 0
 
   private readonly prefersReducedMotion = window.matchMedia(
@@ -127,13 +131,29 @@ export class HolographicCube {
 
     this.object.position.y =
       Math.sin(elapsedTimeInSeconds * IDLE_FLOAT_FREQUENCY) *
-      IDLE_FLOAT_AMPLITUDE *
-      speedMultiplier *
-      (1 - this.focusState.blend)
+        IDLE_FLOAT_AMPLITUDE *
+        speedMultiplier *
+        (1 - this.focusState.blend) -
+      (1 - this.powerOnState.progress) * POWER_ON_RISE_DISTANCE
 
     this.object.scale.setScalar(
-      1 + this.dataslateState.zoom * (DATASLATE_ZOOM_SCALE - 1),
+      (1 + this.dataslateState.zoom * (DATASLATE_ZOOM_SCALE - 1)) *
+        this.powerOnState.progress,
     )
+  }
+
+  powerOn(): void {
+    if (this.prefersReducedMotion) {
+      gsap.killTweensOf(this.powerOnState)
+      this.powerOnState.progress = 1
+      return
+    }
+    gsap.to(this.powerOnState, {
+      progress: 1,
+      duration: POWER_ON_TWEEN_DURATION_SECONDS,
+      ease: POWER_ON_TWEEN_EASE,
+      overwrite: true,
+    })
   }
 
   focusOnFace(cubeFaceIndex: number): void {
@@ -193,6 +213,7 @@ export class HolographicCube {
     gsap.killTweensOf(this.focusState)
     gsap.killTweensOf(this.faceSwitchState)
     gsap.killTweensOf(this.dataslateState)
+    gsap.killTweensOf(this.powerOnState)
     this.cubeGeometry.dispose()
     this.edgesGeometry.dispose()
     this.edgesMaterial.dispose()
