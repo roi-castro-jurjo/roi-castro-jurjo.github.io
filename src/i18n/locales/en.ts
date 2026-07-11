@@ -11,6 +11,8 @@ export const englishLocale: LocaleDefinition = {
       'WARNING: this cogitator lacks WebGL capability. The hologram cannot manifest. Data remains accessible in text mode.',
     'ui.back': 'SEVER LINK',
     'ui.language': 'DIALECT',
+    'ui.protocolsLeft': 'Protocols 01–03',
+    'ui.protocolsRight': 'Protocols 04–06',
 
     'section.identity.label': 'PROTOCOL 01 · IDENTITY',
     'section.identity.preview':

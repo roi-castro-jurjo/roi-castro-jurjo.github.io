@@ -10,7 +10,7 @@ const MAXIMUM_PIXEL_RATIO = 2
 const CAMERA_FIELD_OF_VIEW_IN_DEGREES = 45
 const CAMERA_NEAR_PLANE = 0.1
 const CAMERA_FAR_PLANE = 100
-const CAMERA_DISTANCE_TO_ORIGIN = 6
+const CAMERA_FIT_MARGIN = 1
 
 export class SceneManager {
   readonly scene = new THREE.Scene()
@@ -19,16 +19,34 @@ export class SceneManager {
 
   private readonly clock = new THREE.Clock()
   private readonly frameUpdateCallbacks: FrameUpdateCallback[] = []
+  private readonly containerResizeObserver: ResizeObserver
 
   private readonly resizeRendererToContainer = (): void => {
     const containerWidth = this.containerElement.clientWidth
     const containerHeight = this.containerElement.clientHeight
-    this.camera.aspect = containerWidth / Math.max(containerHeight, 1)
+    const aspectRatio = Math.max(containerWidth / Math.max(containerHeight, 1), 0.01)
+    this.camera.aspect = aspectRatio
+    this.camera.position.z = this.cameraDistanceToFrameContent(aspectRatio)
     this.camera.updateProjectionMatrix()
     this.renderer.setSize(containerWidth, containerHeight)
   }
 
-  constructor(private readonly containerElement: HTMLElement) {
+  private cameraDistanceToFrameContent(aspectRatio: number): number {
+    const verticalFovInRadians = THREE.MathUtils.degToRad(
+      CAMERA_FIELD_OF_VIEW_IN_DEGREES,
+    )
+    const horizontalFovInRadians =
+      2 * Math.atan(Math.tan(verticalFovInRadians / 2) * aspectRatio)
+    const limitingFovInRadians = Math.min(verticalFovInRadians, horizontalFovInRadians)
+    return (
+      (this.framedContentRadius * CAMERA_FIT_MARGIN) / Math.sin(limitingFovInRadians / 2)
+    )
+  }
+
+  constructor(
+    private readonly containerElement: HTMLElement,
+    private readonly framedContentRadius: number,
+  ) {
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
       powerPreference: 'high-performance',
@@ -43,10 +61,10 @@ export class SceneManager {
       CAMERA_NEAR_PLANE,
       CAMERA_FAR_PLANE,
     )
-    this.camera.position.set(0, 0, CAMERA_DISTANCE_TO_ORIGIN)
 
     this.resizeRendererToContainer()
-    window.addEventListener('resize', this.resizeRendererToContainer)
+    this.containerResizeObserver = new ResizeObserver(this.resizeRendererToContainer)
+    this.containerResizeObserver.observe(containerElement)
   }
 
   onFrameUpdate(frameUpdateCallback: FrameUpdateCallback): void {
@@ -66,7 +84,7 @@ export class SceneManager {
 
   dispose(): void {
     this.renderer.setAnimationLoop(null)
-    window.removeEventListener('resize', this.resizeRendererToContainer)
+    this.containerResizeObserver.disconnect()
     this.renderer.dispose()
     this.renderer.domElement.remove()
   }

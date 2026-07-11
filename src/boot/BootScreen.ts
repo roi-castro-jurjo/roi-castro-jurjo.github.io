@@ -1,5 +1,5 @@
 import type { BootLineDefinition } from '../data/bootBank'
-import { sharedAssetLoader } from '../core/AssetLoader'
+import { onAssetLoadProgress } from '../core/assetProgress'
 import { translate } from '../i18n'
 import {
   TYPEWRITER_MS_PER_CHARACTER,
@@ -64,12 +64,14 @@ export class BootScreen {
     this.hostElement.hidden = false
     document.addEventListener('keydown', this.handleSkipInput, true)
     document.addEventListener('pointerdown', this.handleSkipInput, true)
-    sharedAssetLoader.onProgress((loadedAssetCount, totalAssetCount) => {
-      this.assetProgressRatio =
-        totalAssetCount > 0 ? loadedAssetCount / totalAssetCount : 1
-      this.repaintProgressBar()
-      if (this.assetProgressRatio >= 1) this.notifyAssetLoadCompleted?.()
-    })
+    const unsubscribeFromAssetProgress = onAssetLoadProgress(
+      (loadedAssetCount, totalAssetCount) => {
+        this.assetProgressRatio =
+          totalAssetCount > 0 ? loadedAssetCount / totalAssetCount : 1
+        this.repaintProgressBar()
+        if (this.assetProgressRatio >= 1) this.notifyAssetLoadCompleted?.()
+      },
+    )
 
     let charactersWritten = 0
     for (const lineText of lineTexts) {
@@ -109,6 +111,7 @@ export class BootScreen {
     await this.waitForAssetLoadCompletion()
     await this.wait(BOOT_COMPLETE_HOLD_MS)
 
+    unsubscribeFromAssetProgress()
     document.removeEventListener('keydown', this.handleSkipInput, true)
     document.removeEventListener('pointerdown', this.handleSkipInput, true)
     await this.hideOverlay()

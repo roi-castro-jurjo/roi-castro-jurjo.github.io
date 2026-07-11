@@ -64,6 +64,10 @@ export function bindDomTranslations(rootNode: ParentNode = document): void {
       const translationKey = element.dataset['i18n']
       if (translationKey) element.textContent = translate(translationKey)
     })
+    rootNode.querySelectorAll<HTMLElement>('[data-i18n-aria-label]').forEach((element) => {
+      const translationKey = element.dataset['i18nAriaLabel']
+      if (translationKey) element.setAttribute('aria-label', translate(translationKey))
+    })
   }
   applyTranslationsToMarkedElements()
   onLocaleChange(applyTranslationsToMarkedElements)

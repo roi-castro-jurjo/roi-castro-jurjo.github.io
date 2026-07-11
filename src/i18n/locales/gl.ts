@@ -11,6 +11,8 @@ export const galicianLocale: LocaleDefinition = {
       'AVISO: este cogitador carece de capacidade WebGL. O holograma non pode manifestarse. Os datos seguen accesibles en modo texto.',
     'ui.back': 'PECHAR VÍNCULO',
     'ui.language': 'DIALECTO',
+    'ui.protocolsLeft': 'Protocolos 01–03',
+    'ui.protocolsRight': 'Protocolos 04–06',
 
     'section.identity.label': 'PROTOCOLO 01 · IDENTIDADE',
     'section.identity.preview':

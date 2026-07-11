@@ -1,4 +1,5 @@
 export const CUBE_EDGE_LENGTH = 2
+export const CUBE_BOUNDING_RADIUS = (CUBE_EDGE_LENGTH * Math.sqrt(3)) / 2
 export const CUBE_FACE_COUNT = 6
 export const EDGE_GLOW_OPACITY = 0.9
 

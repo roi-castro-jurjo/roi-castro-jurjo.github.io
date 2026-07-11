@@ -33,7 +33,7 @@ export class DataslatePanel {
     const frameElement = document.createElement('div')
     frameElement.className = 'dataslate__frame'
 
-    const titleBar = document.createElement('header')
+    const titleBar = document.createElement('div')
     titleBar.className = 'dataslate__bar'
 
     this.titleElement = document.createElement('h2')
@@ -51,6 +51,7 @@ export class DataslatePanel {
 
     this.bodyElement = document.createElement('div')
     this.bodyElement.className = 'dataslate__body'
+    this.bodyElement.tabIndex = 0
 
     frameElement.append(titleBar, this.bodyElement)
     this.overlayElement.appendChild(frameElement)

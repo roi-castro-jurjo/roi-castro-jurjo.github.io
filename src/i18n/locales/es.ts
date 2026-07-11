@@ -11,6 +11,8 @@ export const spanishLocale: LocaleDefinition = {
       'ADVERTENCIA: este cogitador carece de capacidad WebGL. El holograma no puede manifestarse. Los datos permanecen accesibles en modo texto.',
     'ui.back': 'CERRAR VÍNCULO',
     'ui.language': 'DIALECTO',
+    'ui.protocolsLeft': 'Protocolos 01–03',
+    'ui.protocolsRight': 'Protocolos 04–06',
 
     'section.identity.label': 'PROTOCOLO 01 · IDENTIDAD',
     'section.identity.preview':

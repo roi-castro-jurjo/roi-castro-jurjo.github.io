@@ -13,10 +13,11 @@ type FaceFocusHandlers = Pick<
 >
 import { renderLanguageSelector } from '../ui/LanguageSelector'
 import { DataslatePanel } from '../ui/DataslatePanel'
-import { SceneManager } from '../scene/SceneManager'
-import { HolographicCube } from '../scene/HolographicCube'
-import { FaceFocusController } from '../interaction/FaceFocusController'
+import type { SceneManager } from '../scene/SceneManager'
+import type { HolographicCube } from '../scene/HolographicCube'
+import type { FaceFocusController } from '../interaction/FaceFocusController'
 import { SECTIONS } from '../data/sections'
+import { CUBE_BOUNDING_RADIUS } from '../scene/holographicCubeConfig'
 
 export class Application {
   private sceneManager?: SceneManager
@@ -38,7 +39,7 @@ export class Application {
     const canvasHostElement = document.getElementById('canvas-host')!
     let focusHandlers: FaceFocusHandlers | undefined
     if (isWebGLAvailable()) {
-      focusHandlers = this.startHologramScene(canvasHostElement)
+      focusHandlers = await this.startHologramScene(canvasHostElement)
     } else {
       this.showWebglUnsupportedNotice(canvasHostElement)
     }
@@ -89,8 +90,18 @@ export class Application {
     canvasHostElement.appendChild(webglUnsupportedNotice)
   }
 
-  private startHologramScene(canvasHostElement: HTMLElement): FaceFocusHandlers {
-    this.sceneManager = new SceneManager(canvasHostElement)
+  private async startHologramScene(
+    canvasHostElement: HTMLElement,
+  ): Promise<FaceFocusHandlers> {
+    const [{ SceneManager }, { HolographicCube }, { FaceFocusController }] =
+      await Promise.all([
+        import('../scene/SceneManager'),
+        import('../scene/HolographicCube'),
+        import('../interaction/FaceFocusController'),
+      ])
+
+    canvasHostElement.setAttribute('aria-hidden', 'true')
+    this.sceneManager = new SceneManager(canvasHostElement, CUBE_BOUNDING_RADIUS)
     this.holographicCube = new HolographicCube()
     this.sceneManager.scene.add(this.holographicCube.object)
 
