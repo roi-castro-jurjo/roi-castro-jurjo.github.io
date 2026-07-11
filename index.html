@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Roi Castro — portfolio personal. Terminal cogitador del Adeptus Mechanicus." />
+    <meta name="theme-color" content="#050403" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Roi Castro · Cogitador Personal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <div id="crt-overlay" aria-hidden="true"></div>
+
+      <div id="boot-screen" hidden></div>
+
+      <header id="app-header">
+        <h1 data-i18n="app.title"></h1>
+        <p class="status-line" data-i18n="app.status"></p>
+        <div id="language-slot"></div>
+      </header>
+
+      <main id="stage">
+        <nav id="buttons-left" class="face-buttons" data-i18n-aria-label="ui.protocolsLeft"></nav>
+        <div id="canvas-host"></div>
+        <nav id="buttons-right" class="face-buttons" data-i18n-aria-label="ui.protocolsRight"></nav>
+      </main>
+
+      <div id="dataslate-slot"></div>
+
+      <footer id="app-footer">
+        <span data-i18n="app.footer"></span>
+      </footer>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

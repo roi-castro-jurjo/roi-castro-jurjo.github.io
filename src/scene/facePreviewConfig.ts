@@ -1,0 +1,10 @@
+export const PREVIEW_CANVAS_SIZE = 1024
+export const PREVIEW_CANVAS_MARGIN = 96
+export const PREVIEW_CORNER_TICK_LENGTH = 48
+
+export const PREVIEW_TITLE_FONT_SIZE = 58
+export const PREVIEW_BODY_FONT_SIZE = 40
+export const PREVIEW_BODY_LINE_HEIGHT = 58
+
+export const PREVIEW_FADE_DURATION_SECONDS = 0.45
+export const PREVIEW_FADE_EASE = 'power2.out'

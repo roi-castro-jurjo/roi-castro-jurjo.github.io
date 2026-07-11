@@ -1,0 +1,5 @@
+export const TYPEWRITER_MS_PER_CHARACTER = 6
+export const TYPEWRITER_JITTER_MS = 8
+export const LINE_PAUSE_MS = 90
+export const REDUCED_MOTION_LINE_INTERVAL_MS = 40
+export const BOOT_COMPLETE_HOLD_MS = 350
