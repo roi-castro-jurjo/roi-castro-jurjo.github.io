@@ -14,41 +14,41 @@ export const englishLocale: LocaleDefinition = {
     'ui.protocolsLeft': 'Protocols 01–03',
     'ui.protocolsRight': 'Protocols 04–06',
 
-    'section.identity.label': 'PROTOCOL 01 · IDENTITY',
-    'section.identity.preview':
-      'Biographical record of the operator. Designation, function and oaths.',
-    'section.identity.body':
-      '[TRANSCRIPTION PENDING] Operator dossier awaiting approval by the designated Lexmechanic. REF: ID/M42.',
+    'section.about.label': 'PROTOCOL 01 · ABOUT ME',
+    'section.about.preview':
+      'Introduction to the operator: role, specialty and career at a glance.',
+    'section.about.body':
+      '[UNDER CONSTRUCTION] We are still working on this section. Content coming soon.',
 
-    'section.service.label': 'PROTOCOL 02 · SERVICE RECORD',
-    'section.service.preview':
-      'History of campaigns and postings. Accumulated experience of the subject.',
-    'section.service.body':
-      '[TRANSCRIPTION PENDING] Service record sealed, awaiting declassification. REF: SRV/M42.',
+    'section.experience.label': 'PROTOCOL 02 · EXPERIENCE',
+    'section.experience.preview':
+      'Professional history: stages, roles and notable achievements.',
+    'section.experience.body':
+      '[UNDER CONSTRUCTION] We are still working on this section. Content coming soon.',
 
-    'section.arsenal.label': 'PROTOCOL 03 · ARSENAL',
-    'section.arsenal.preview':
-      'Inventory of tools, languages and mastered technical rites.',
-    'section.arsenal.body':
-      '[TRANSCRIPTION PENDING] Inventory under audit by the armament Genetor. REF: ARS/M42.',
+    'section.projects.label': 'PROTOCOL 03 · PROJECTS',
+    'section.projects.preview':
+      'Selected projects, each with its purpose and stack.',
+    'section.projects.body':
+      '[UNDER CONSTRUCTION] We are still working on this section. Content coming soon.',
 
-    'section.constructs.label': 'PROTOCOL 04 · CONSTRUCTS',
-    'section.constructs.preview':
-      'Archive of artefacts and constructs forged by the operator.',
-    'section.constructs.body':
-      '[TRANSCRIPTION PENDING] Construct archive under cataloguing. REF: CNS/M42.',
+    'section.stack.label': 'PROTOCOL 04 · TECH STACK',
+    'section.stack.preview':
+      'Languages, tools and technologies in everyday use.',
+    'section.stack.body':
+      '[UNDER CONSTRUCTION] We are still working on this section. Content coming soon.',
 
-    'section.credentials.label': 'PROTOCOL 05 · CREDENTIALS',
-    'section.credentials.preview':
-      'Certifications and studies sanctioned by the Adeptus.',
-    'section.credentials.body':
-      '[TRANSCRIPTION PENDING] Credentials under verification by the Archivist. REF: CRD/M42.',
+    'section.personal.label': 'PROTOCOL 05 · OFF-DUTY',
+    'section.personal.preview':
+      'The unofficial record: hobbies and interests away from the terminal.',
+    'section.personal.body':
+      '[UNDER CONSTRUCTION] We are still working on this section. Content coming soon.',
 
-    'section.vox.label': 'PROTOCOL 06 · VOX CHANNEL',
-    'section.vox.preview':
-      'Authorised contact frequencies for direct communication.',
-    'section.vox.body':
-      '[TRANSCRIPTION PENDING] Vox frequencies awaiting consecration. REF: VOX/M42.',
+    'section.contact.label': 'PROTOCOL 06 · CONTACT',
+    'section.contact.preview':
+      'Authorised channels for direct communication.',
+    'section.contact.body':
+      '[UNDER CONSTRUCTION] We are still working on this section. Content coming soon.',
 
     'boot.skipHint': 'PRESS ANY KEY TO SKIP THE RITE',
     'boot.progressLabel': 'ACTIVATION RITE PROGRESS',

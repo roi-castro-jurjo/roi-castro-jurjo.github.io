@@ -29,10 +29,10 @@ function createSectionDefinition(
 }
 
 export const SECTIONS: readonly SectionDefinition[] = [
-  createSectionDefinition('identity', BOX_GEOMETRY_FACE_INDEX.positiveZ),
-  createSectionDefinition('service', BOX_GEOMETRY_FACE_INDEX.positiveX),
-  createSectionDefinition('arsenal', BOX_GEOMETRY_FACE_INDEX.positiveY),
-  createSectionDefinition('constructs', BOX_GEOMETRY_FACE_INDEX.negativeX),
-  createSectionDefinition('credentials', BOX_GEOMETRY_FACE_INDEX.negativeY),
-  createSectionDefinition('vox', BOX_GEOMETRY_FACE_INDEX.negativeZ),
+  createSectionDefinition('about', BOX_GEOMETRY_FACE_INDEX.positiveZ),
+  createSectionDefinition('experience', BOX_GEOMETRY_FACE_INDEX.positiveX),
+  createSectionDefinition('projects', BOX_GEOMETRY_FACE_INDEX.positiveY),
+  createSectionDefinition('stack', BOX_GEOMETRY_FACE_INDEX.negativeX),
+  createSectionDefinition('personal', BOX_GEOMETRY_FACE_INDEX.negativeY),
+  createSectionDefinition('contact', BOX_GEOMETRY_FACE_INDEX.negativeZ),
 ]

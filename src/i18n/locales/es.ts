@@ -14,41 +14,41 @@ export const spanishLocale: LocaleDefinition = {
     'ui.protocolsLeft': 'Protocolos 01–03',
     'ui.protocolsRight': 'Protocolos 04–06',
 
-    'section.identity.label': 'PROTOCOLO 01 · IDENTIDAD',
-    'section.identity.preview':
-      'Registro biográfico del operador. Designación, función y juramentos.',
-    'section.identity.body':
-      '[TRANSCRIPCIÓN PENDIENTE] Expediente del operador en proceso de aprobación por el Lexmechanic designado. REF: ID/M42.',
+    'section.about.label': 'PROTOCOLO 01 · SOBRE MÍ',
+    'section.about.preview':
+      'Presentación del operador: rol, especialidad y trayectoria en síntesis.',
+    'section.about.body':
+      '[EN CONSTRUCCIÓN] Estamos trabajando en esta sección. Contenido disponible próximamente.',
 
-    'section.service.label': 'PROTOCOLO 02 · REGISTRO DE SERVICIO',
-    'section.service.preview':
-      'Historial de campañas y destinos. Experiencia acumulada del sujeto.',
-    'section.service.body':
-      '[TRANSCRIPCIÓN PENDIENTE] Registro de servicio sellado a la espera de desclasificación. REF: SRV/M42.',
+    'section.experience.label': 'PROTOCOLO 02 · EXPERIENCIA',
+    'section.experience.preview':
+      'Historial profesional: etapas, roles y logros destacados.',
+    'section.experience.body':
+      '[EN CONSTRUCCIÓN] Estamos trabajando en esta sección. Contenido disponible próximamente.',
 
-    'section.arsenal.label': 'PROTOCOLO 03 · ARSENAL',
-    'section.arsenal.preview':
-      'Inventario de herramientas, lenguajes y ritos técnicos dominados.',
-    'section.arsenal.body':
-      '[TRANSCRIPCIÓN PENDIENTE] Inventario en auditoría por el Genetor de armamento. REF: ARS/M42.',
+    'section.projects.label': 'PROTOCOLO 03 · PROYECTOS',
+    'section.projects.preview':
+      'Proyectos seleccionados, con su propósito y su stack.',
+    'section.projects.body':
+      '[EN CONSTRUCCIÓN] Estamos trabajando en esta sección. Contenido disponible próximamente.',
 
-    'section.constructs.label': 'PROTOCOLO 04 · CONSTRUCTOS',
-    'section.constructs.preview':
-      'Archivo de artefactos y constructos forjados por el operador.',
-    'section.constructs.body':
-      '[TRANSCRIPCIÓN PENDIENTE] Archivo de constructos en catalogación. REF: CNS/M42.',
+    'section.stack.label': 'PROTOCOLO 04 · STACK TÉCNICO',
+    'section.stack.preview':
+      'Lenguajes, herramientas y tecnologías de uso habitual.',
+    'section.stack.body':
+      '[EN CONSTRUCCIÓN] Estamos trabajando en esta sección. Contenido disponible próximamente.',
 
-    'section.credentials.label': 'PROTOCOLO 05 · CREDENCIALES',
-    'section.credentials.preview':
-      'Certificaciones y estudios sancionados por el Adeptus.',
-    'section.credentials.body':
-      '[TRANSCRIPCIÓN PENDIENTE] Credenciales en verificación por el Archivista. REF: CRD/M42.',
+    'section.personal.label': 'PROTOCOLO 05 · FUERA DE SERVICIO',
+    'section.personal.preview':
+      'El registro extraoficial: aficiones e intereses lejos del terminal.',
+    'section.personal.body':
+      '[EN CONSTRUCCIÓN] Estamos trabajando en esta sección. Contenido disponible próximamente.',
 
-    'section.vox.label': 'PROTOCOLO 06 · CANAL DE VOX',
-    'section.vox.preview':
-      'Frecuencias de contacto autorizadas para comunicación directa.',
-    'section.vox.body':
-      '[TRANSCRIPCIÓN PENDIENTE] Frecuencias de vox pendientes de consagración. REF: VOX/M42.',
+    'section.contact.label': 'PROTOCOLO 06 · CONTACTO',
+    'section.contact.preview':
+      'Canales autorizados para comunicación directa.',
+    'section.contact.body':
+      '[EN CONSTRUCCIÓN] Estamos trabajando en esta sección. Contenido disponible próximamente.',
 
     'boot.skipHint': 'PULSA CUALQUIER TECLA PARA OMITIR EL RITO',
     'boot.progressLabel': 'PROGRESO DEL RITO DE ACTIVACIÓN',
